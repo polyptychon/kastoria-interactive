@@ -26,23 +26,27 @@ selectedMarker = null
 GoogleMapsLoader.load((g)->
   google = g
   map = new google.maps.Map($('.map')[0], mapOptions)
-  data.forEach((point, index)->
-    setTimeout(()->
-      addMarker(point)
-    , index * 100)
-  )
+  setMarkers()
 )
 
-round = (value) ->
-  Math.round(value * 1000000) / 1000000
+setMarkers = ()->
+  data.forEach((point, index)->
+    setTimeout(()=>
+      marker = addMarker(point)
+      selectMarker(marker) if index==0
+    , index * 100)
+  )
 
-getMarker = (position) ->
+round = (value) ->
+  Math.round(value * 100000) / 100000
+
+getMarkerByPosition = (position) ->
   lat = position.lat()
   lng = position.lng()
   filteredData = data.filter((point)->
     return round(point.geometry.coordinates[1]) == round(lat) && round(point.geometry.coordinates[0]) == round(lng)
   )
-  return filteredData[0]
+  return if filteredData.length==1 then filteredData[0] else null
 
 addMarker = (point)->
   marker = new google.maps.Marker({
@@ -52,16 +56,25 @@ addMarker = (point)->
     position: {lat: point.geometry.coordinates[1], lng: point.geometry.coordinates[0]}
   })
   point.marker = marker
-  marker.addListener('click', toggleBounce)
+  marker.addListener('click', handleMarkerClick)
+  return marker
 
-toggleBounce = (event)->
-  markerData = getMarker(event.latLng)
-  if (markerData?)
-    marker = markerData.marker
-    map.panTo(event.latLng);
-    selectedMarker.setAnimation(null) if (selectedMarker != null)
-    if (marker.getAnimation() != null)
-      marker.setAnimation(null);
+selectMarker = (value) ->
+  position =
+    if value.getPosition
+      value.getPosition()
+    else if value.marker
+      value.marker.getPosition()
     else
-      marker.setAnimation(google.maps.Animation.BOUNCE)
-      selectedMarker = marker
+      value
+  markerData = getMarkerByPosition(position)
+  if markerData?
+    marker = markerData.marker
+    map.panTo(position);
+    selectedMarker.setAnimation(null) if (selectedMarker != null && selectedMarker!=marker)
+    marker.setAnimation(google.maps.Animation.BOUNCE)
+    selectedMarker = marker
+
+handleMarkerClick = (event)->
+  selectMarker(event.latLng)
+
