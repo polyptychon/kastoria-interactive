@@ -1,0 +1,11 @@
+.map, .info {
+  width: 50%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.info {
+  left: 50%;
+  background: $brand-primary;
+}

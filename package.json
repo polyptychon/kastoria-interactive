@@ -61,6 +61,7 @@
   },
   "dependencies": {
     "animationframe": "git://github.com/HarrisSidiropoulos/animationframe",
+    "google-maps": "^3.2.1",
     "jquery": "^2.1.1",
     "jquery-touch-events": "git+https://github.com/benmajor/jQuery-Touch-Events.git",
     "jquery.browser": "^0.1.0",

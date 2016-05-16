@@ -38,11 +38,11 @@ $pathToSpriteSVG : '../images/sprites.svg';
 @import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/component-animations";
 @import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/dropdowns";
 //@import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/button-groups";
-@import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/input-groups";
-@import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/navs";
-@import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/navbar";
-@import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/breadcrumbs";
-@import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/pagination";
+//@import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/input-groups";
+//@import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/navs";
+//@import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/navbar";
+//@import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/breadcrumbs";
+//@import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/pagination";
 //@import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/pager";
 @import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/labels";
 //@import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/badges";
@@ -59,9 +59,9 @@ $pathToSpriteSVG : '../images/sprites.svg';
 
 // Components w/ JavaScript
 //@import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/modals";
-//@import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/tooltip";
-//@import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/popovers";
-//@import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/carousel";
+@import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/tooltip";
+@import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/popovers";
+@import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/carousel";
 
 // Utility classes
 @import "../../node_modules/bootstrap/assets/stylesheets/bootstrap/utilities";
@@ -71,15 +71,5 @@ $pathToSpriteSVG : '../images/sprites.svg';
 @import "sprites";
 @import "icons";
 
-@import "share-menu";
-@import "wp-gallery";
 
-@import "footer";
-@import "header";
-
-@import "breadcrumb";
-@import "pagination";
-@import "aside-menu";
-@import "contact-form";
-
-
+@import "pages/default";
