@@ -15,17 +15,17 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.4em;
 }
 
-h1 { @extend .h1;
+h1 { @extend .h1 !optional;
   font-family: $font-secondary; }
-h2 { @extend .h2;
+h2 { @extend .h2 !optional;
   font-family: $font-primary; }
-h3 { @extend .h3;
+h3 { @extend .h3 !optional;
   font-family: $font-primary; }
-h4 { @extend .h4;
+h4 { @extend .h4 !optional;
   font-family: $font-secondary; }
-h5 { @extend .h5;
+h5 { @extend .h5 !optional;
   font-family: $font-primary; }
-h6 { @extend .h6;
+h6 { @extend .h6 !optional;
   font-family: $font-primary; }
 
 a {
@@ -56,7 +56,7 @@ hr {
     top: 50%;
     margin-top: -8px;
     margin-left: -24px;
-    @extend .hr;
+    @extend .hr !optional;
   }
 }
 .disabled {

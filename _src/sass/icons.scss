@@ -11,13 +11,13 @@ $hover-icons: facebook twitter pinterst google-plus youtube vimeo;
     }
   }
   .#{$hover-icon}-icon {
-    @extend .sprite_#{$hover-icon};
+    @extend .sprite_#{$hover-icon} !optional;
     &:hover {
-      @extend .sprite_#{$hover-icon}-hover;
+      @extend .sprite_#{$hover-icon}-hover !optional;
     }
   }
   a:hover .#{$hover-icon}-icon, a:focus .#{$hover-icon}-icon {
-    @extend .sprite_#{$hover-icon}-hover;
+    @extend .sprite_#{$hover-icon}-hover !optional;
   }
 }
 
@@ -31,7 +31,7 @@ $simple-icons: address logo phone fax email;
     }
   }
   .#{$simple-icon}-icon {
-    @extend .sprite_#{$simple-icon};
+    @extend .sprite_#{$simple-icon} !optional;
     margin-bottom: -1px;
     margin-right: 5px;
   }

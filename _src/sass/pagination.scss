@@ -40,17 +40,17 @@ $blog-main-color: $brand-primary;
   }
   .next-icon {
     margin-bottom: -1px;
-    @extend .sprite_next-arrow;
+    @extend .sprite_next-arrow !optional;
     &:hover {
-      @extend .sprite_next-arrow-hover;
+      @extend .sprite_next-arrow-hover !optional;
     }
   }
 
   .previous-icon {
     margin-bottom: -1px;
-    @extend .sprite_previous-arrow;
+    @extend .sprite_previous-arrow !optional;
     &:hover {
-      @extend .sprite_previous-arrow-hover;
+      @extend .sprite_previous-arrow-hover !optional;
     }
   }
 }

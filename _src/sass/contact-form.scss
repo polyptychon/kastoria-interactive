@@ -2,22 +2,22 @@
   color: $brand-danger;
 }
 .screen-reader-response[role="alert"], .wpcf7-response-output.wpcf7-validation-errors[role="alert"] {
-  @extend .alert;
-  @extend .alert-danger;
+  @extend .alert !optional;
+  @extend .alert-danger !optional;
   ul {
-    @extend .list-unstyled;
+    @extend .list-unstyled !optional;
     display: none;
   }
 }
 .screen-reader-response.alert-success[role="alert"] {
-  @extend .alert;
-  @extend .alert-success;
+  @extend .alert !optional;
+  @extend .alert-success !optional;
   color: $gray-dark;
 }
 .wpcf7-response-output.wpcf7-mail-sent-ok {
   margin-top: 15px;
-  @extend .alert;
-  @extend .alert-success;
+  @extend .alert !optional;
+  @extend .alert-success !optional;
   color: $gray-dark;
 }
 label span[role="alert"] {
