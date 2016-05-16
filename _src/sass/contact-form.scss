@@ -1,0 +1,28 @@
+.wpcf7-not-valid-tip {
+  color: $brand-danger;
+}
+.screen-reader-response[role="alert"], .wpcf7-response-output.wpcf7-validation-errors[role="alert"] {
+  @extend .alert;
+  @extend .alert-danger;
+  ul {
+    @extend .list-unstyled;
+    display: none;
+  }
+}
+.screen-reader-response.alert-success[role="alert"] {
+  @extend .alert;
+  @extend .alert-success;
+  color: $gray-dark;
+}
+.wpcf7-response-output.wpcf7-mail-sent-ok {
+  margin-top: 15px;
+  @extend .alert;
+  @extend .alert-success;
+  color: $gray-dark;
+}
+label span[role="alert"] {
+  line-height: 3em;
+  color: $brand-danger;
+}
+
+

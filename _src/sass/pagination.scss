@@ -1,0 +1,57 @@
+
+$blog-main-color: $brand-primary;
+.pagination {
+  li > a.next, li > a.previous, li > a {
+    background-color: transparent;
+    border: none;
+    color: #7f7f7f;
+    &:hover {
+      color: $blog-main-color;
+    }
+  }
+  li.active {
+    &:hover, & {
+      background-color: $blog-main-color;
+    }
+  }
+  li.active a {
+    &:hover, & {
+      background-color: $blog-main-color;
+    }
+  }
+  li > a {
+    font-size: 14px;
+    font-weight: normal;
+    text-align: center;
+    padding: 5px 0;
+    max-width: 2em;
+    width: 1.7em;
+    &:hover {
+      background-color: transparent;
+    }
+    &.current {
+      color:#666;
+    }
+    &.disabled {
+      color: lighten(#333, 30%);
+      cursor: default;
+      pointer-events: none;
+    }
+  }
+  .next-icon {
+    margin-bottom: -1px;
+    @extend .sprite_next-arrow;
+    &:hover {
+      @extend .sprite_next-arrow-hover;
+    }
+  }
+
+  .previous-icon {
+    margin-bottom: -1px;
+    @extend .sprite_previous-arrow;
+    &:hover {
+      @extend .sprite_previous-arrow-hover;
+    }
+  }
+}
+

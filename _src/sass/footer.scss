@@ -1,0 +1,37 @@
+footer {
+  background: $gray-dark;
+  padding: 40px 0;
+  .social-menu {
+    padding: 0;
+    text-align: center;
+    li {
+      display: inline-block;
+      float: none;
+      padding: 2px 8px;
+      margin-bottom: 15px;
+    }
+  }
+  .footer-menu {
+    text-align: center;
+    padding: 0;
+    li {
+      display: inline;
+      padding: 0;
+      a {
+        color: white;
+        &:after {
+          content: '/';
+          padding: 0 2px 0 6px;
+        }
+      }
+      &:last-child > a:after {
+        display: none;
+      }
+    }
+  }
+  p {
+    font-family: $font-primary;
+    color: white;
+    text-align: center;
+  }
+}
