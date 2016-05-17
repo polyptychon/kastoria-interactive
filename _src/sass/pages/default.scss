@@ -1,3 +1,4 @@
+$map-width: 100%;
 .map, .info {
   width: 50%;
   height: 100%;
@@ -5,8 +6,12 @@
   left: 0;
   top: 0;
 }
+.map {
+  width: $map-width;
+}
 .info {
   left: 50%;
+  width: 50%;
   background: $brand-primary;
 }
 .info-gallery {

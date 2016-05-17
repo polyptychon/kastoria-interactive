@@ -7,6 +7,9 @@ require "bootstrap/assets/javascripts/bootstrap/dropdown"
 require "bootstrap/assets/javascripts/bootstrap/collapse"
 require "bootstrap/assets/javascripts/bootstrap/carousel"
 
+data = require('./data')
+GoogleMapsLoader = require('google-maps')
+
 Keyboard = {
   ENTER: 13,
   SPACE: 32,
@@ -15,9 +18,6 @@ Keyboard = {
   NEXT: 39,
   DOWN: 40
 };
-
-data = require('./data')
-GoogleMapsLoader = require('google-maps')
 
 GoogleMapsLoader.KEY = 'AIzaSyD8y7IJNTgRSwbnoR-I1OopiRU721SZg3k'
 GoogleMapsLoader.VERSION = '3.14'
@@ -37,20 +37,20 @@ GoogleMapsLoader.load((g)->
   google = g
   map = new google.maps.Map($('.map')[0], mapOptions)
   setMarkers()
+  google.maps.event.addListenerOnce(map,"bounds_changed", ()-> selectMarker(data[0].marker))
   $(global).bind('keyup', handleKeyup)
 )
 
 handleKeyup = (event)->
   if (event.keyCode==Keyboard.PREVIOUS)
-    previousMarker()
+    selectPreviousMarker()
   else if (event.keyCode==Keyboard.NEXT)
-    nextMarker()
+    selectNextMarker()
 
 setMarkers = ()->
   data.forEach((point, index)->
     setTimeout(()=>
-      marker = addMarker(point)
-      selectMarker(marker) if index==0
+      addMarker(point)
     , index * 100)
   )
 
@@ -87,7 +87,7 @@ selectMarker = (value) ->
   markerData = getMarkerByPosition(position)
   if markerData?
     marker = markerData.marker
-    map.panTo(position);
+    panToCenter(position)
     selectedMarker.setAnimation(null) if (selectedMarker != null && selectedMarker!=marker)
     marker.setAnimation(google.maps.Animation.BOUNCE)
     selectedMarker = marker
@@ -95,14 +95,30 @@ selectMarker = (value) ->
 handleMarkerClick = (event)->
   selectMarker(event.latLng)
 
-previousMarker = ()->
+selectPreviousMarker = ()->
   marker = getMarkerByPosition(selectedMarker.getPosition())
   currentIndex = data.indexOf(marker)
   previousIndex = if currentIndex-1<0 then data.length-1 else currentIndex-1
   selectMarker(data[previousIndex])
 
-nextMarker = ()->
+selectNextMarker = ()->
   marker = getMarkerByPosition(selectedMarker.getPosition())
   currentIndex = data.indexOf(marker)
   nextIndex = if currentIndex+1>=data.length then 0 else currentIndex+1
   selectMarker(data[nextIndex])
+
+panToCenter = (latlng) ->
+  offsetx = - ($(global).width() - $('.info').width())/2
+  offsety = 0
+  scale = Math.pow(2, map.getZoom());
+
+  worldCoordinateCenter = map.getProjection().fromLatLngToPoint(latlng);
+  pixelOffset = new google.maps.Point((offsetx/scale) || 0,(offsety/scale) ||0)
+
+  worldCoordinateNewCenter = new google.maps.Point(
+    worldCoordinateCenter.x - pixelOffset.x,
+    worldCoordinateCenter.y + pixelOffset.y
+  )
+
+  newCenter = map.getProjection().fromPointToLatLng(worldCoordinateNewCenter)
+  map.panTo(newCenter)
