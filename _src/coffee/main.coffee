@@ -121,6 +121,7 @@ setData = (markerData)->
     description:markerData.properties.description
   }
   $('.info').html require('../templates/partials/info.jade')(infoData)
+  $('.carousel').carousel()
 
 selectPreviousMarker = ()->
   marker = getMarkerByPosition(selectedMarker.getPosition())
