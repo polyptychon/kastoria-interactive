@@ -91,9 +91,13 @@ selectMarker = (value) ->
     selectedMarker.setAnimation(null) if (selectedMarker != null && selectedMarker!=marker)
     marker.setAnimation(google.maps.Animation.BOUNCE)
     selectedMarker = marker
+    setData(markerData)
 
 handleMarkerClick = (event)->
   selectMarker(event.latLng)
+
+setData = (markerData)->
+
 
 selectPreviousMarker = ()->
   marker = getMarkerByPosition(selectedMarker.getPosition())
