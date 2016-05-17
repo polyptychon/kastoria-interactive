@@ -86,6 +86,12 @@ addMarker = (point)->
   marker.addListener('click', handleMarkerClick)
   return marker
 
+resetMarker = (marker)->
+  return if !marker
+  marker.setZIndex(100)
+  marker.setIcon(getIcon())
+  marker.setAnimation(null) if (selectedMarker!=marker)
+
 selectMarker = (value) ->
   position =
     if value.getPosition
@@ -98,10 +104,7 @@ selectMarker = (value) ->
   if markerData?
     marker = markerData.marker
     panToCenter(position)
-    if selectedMarker
-      selectedMarker.setZIndex(100)
-      selectedMarker.setIcon(getIcon())
-      selectedMarker.setAnimation(null) if (selectedMarker!=marker)
+    resetMarker(selectedMarker)
     marker.setAnimation(google.maps.Animation.BOUNCE)
     setTimeout(()->
       marker.setAnimation(null)
