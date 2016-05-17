@@ -7,6 +7,15 @@ require "bootstrap/assets/javascripts/bootstrap/dropdown"
 require "bootstrap/assets/javascripts/bootstrap/collapse"
 require "bootstrap/assets/javascripts/bootstrap/carousel"
 
+Keyboard = {
+  ENTER: 13,
+  SPACE: 32,
+  PREVIOUS: 37,
+  UP: 38,
+  NEXT: 39,
+  DOWN: 40
+};
+
 data = require('./data')
 GoogleMapsLoader = require('google-maps')
 
@@ -28,7 +37,14 @@ GoogleMapsLoader.load((g)->
   google = g
   map = new google.maps.Map($('.map')[0], mapOptions)
   setMarkers()
+  $(global).bind('keyup', handleKeyup)
 )
+
+handleKeyup = (event)->
+  if (event.keyCode==Keyboard.PREVIOUS)
+    previousMarker()
+  else if (event.keyCode==Keyboard.NEXT)
+    nextMarker()
 
 setMarkers = ()->
   data.forEach((point, index)->
@@ -79,3 +95,14 @@ selectMarker = (value) ->
 handleMarkerClick = (event)->
   selectMarker(event.latLng)
 
+previousMarker = ()->
+  marker = getMarkerByPosition(selectedMarker.getPosition())
+  currentIndex = data.indexOf(marker)
+  previousIndex = if currentIndex-1<0 then data.length-1 else currentIndex-1
+  selectMarker(data[previousIndex])
+
+nextMarker = ()->
+  marker = getMarkerByPosition(selectedMarker.getPosition())
+  currentIndex = data.indexOf(marker)
+  nextIndex = if currentIndex+1>=data.length then 0 else currentIndex+1
+  selectMarker(data[nextIndex])
