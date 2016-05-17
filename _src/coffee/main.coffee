@@ -101,6 +101,9 @@ selectMarker = (value) ->
     selectedMarker.setIcon(getIcon()) if selectedMarker
     selectedMarker.setAnimation(null) if (selectedMarker && selectedMarker!=marker)
     marker.setAnimation(google.maps.Animation.BOUNCE)
+    setTimeout(()->
+      marker.setAnimation(null)
+    , 1000)
     selectedMarker = marker
     marker.setIcon(getIcon('assets/images/church-yellow.png'))
     setData(markerData)
