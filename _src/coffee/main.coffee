@@ -65,13 +65,13 @@ getMarkerByPosition = (position) ->
   )
   return if filteredData.length==1 then filteredData[0] else null
 
-getIcon = (url='assets/images/church-red.png')->
+getIcon = (url='assets/images/church-red.png', w=30, h=34)->
   return {
     url: url
-    size: new google.maps.Size(30, 34)
+    size: new google.maps.Size(w, h)
     origin: new google.maps.Point(0, 0)
-    anchor: new google.maps.Point(15, 34)
-    scaledSize: new google.maps.Size(30, 34)
+    anchor: new google.maps.Point(w/2, h)
+    scaledSize: new google.maps.Size(w, h)
   }
 
 addMarker = (point)->
