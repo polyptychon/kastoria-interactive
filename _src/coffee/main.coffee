@@ -98,12 +98,15 @@ selectMarker = (value) ->
   if markerData?
     marker = markerData.marker
     panToCenter(position)
-    selectedMarker.setIcon(getIcon()) if selectedMarker
-    selectedMarker.setAnimation(null) if (selectedMarker && selectedMarker!=marker)
+    if selectedMarker
+      selectedMarker.setZIndex(100)
+      selectedMarker.setIcon(getIcon())
+      selectedMarker.setAnimation(null) if (selectedMarker!=marker)
     marker.setAnimation(google.maps.Animation.BOUNCE)
     setTimeout(()->
       marker.setAnimation(null)
     , 1000)
+    marker.setZIndex(1000)
     selectedMarker = marker
     marker.setIcon(getIcon('assets/images/church-yellow.png'))
     setData(markerData)

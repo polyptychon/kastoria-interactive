@@ -10,10 +10,14 @@ $map-width: 100%;
   width: $map-width;
 }
 .info {
+  transition: left .5s ease-out;
   left: 50%;
   width: 50%;
   background: $brand-primary;
   overflow: hidden;
+  &.close {
+    left: 100%;
+  }
 }
 .info-gallery {
   height: 50%;
