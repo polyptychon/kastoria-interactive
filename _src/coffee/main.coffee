@@ -97,7 +97,15 @@ handleMarkerClick = (event)->
   selectMarker(event.latLng)
 
 setData = (markerData)->
-
+  infoData = {
+    images:[
+      {src: "assets/images/Sample-image-Ag-Anargiroi.jpg"},
+      {src: "assets/images/Sample-image-Ag-Anargiroi.jpg"}
+    ],
+    title:markerData.properties.name,
+    description:markerData.properties.description
+  }
+  $('.info').html require('../templates/partials/info.jade')(infoData)
 
 selectPreviousMarker = ()->
   marker = getMarkerByPosition(selectedMarker.getPosition())

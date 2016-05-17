@@ -13,12 +13,14 @@ $map-width: 100%;
   left: 50%;
   width: 50%;
   background: $brand-primary;
+  overflow: hidden;
 }
 .info-gallery {
   height: 50%;
 }
 .info-data {
   height: 50%;
+  overflow: scroll;
   padding: 15px 40px;
 }
 .info-data-title {
