@@ -65,11 +65,21 @@ getMarkerByPosition = (position) ->
   )
   return if filteredData.length==1 then filteredData[0] else null
 
+getIcon = (url='assets/images/church-red.png')->
+  return {
+    url: url
+    size: new google.maps.Size(30, 34)
+    origin: new google.maps.Point(0, 0)
+    anchor: new google.maps.Point(15, 34)
+    scaledSize: new google.maps.Size(30, 34)
+  }
+
 addMarker = (point)->
   marker = new google.maps.Marker({
-    map: map,
-    draggable: true,
-    animation: google.maps.Animation.DROP,
+    map: map
+    draggable: true
+    animation: google.maps.Animation.DROP
+    icon: getIcon()
     position: {lat: point.geometry.coordinates[1], lng: point.geometry.coordinates[0]}
   })
   point.marker = marker
@@ -88,9 +98,11 @@ selectMarker = (value) ->
   if markerData?
     marker = markerData.marker
     panToCenter(position)
-    selectedMarker.setAnimation(null) if (selectedMarker != null && selectedMarker!=marker)
+    selectedMarker.setIcon(getIcon()) if selectedMarker
+    selectedMarker.setAnimation(null) if (selectedMarker && selectedMarker!=marker)
     marker.setAnimation(google.maps.Animation.BOUNCE)
     selectedMarker = marker
+    marker.setIcon(getIcon('assets/images/church-yellow.png'))
     setData(markerData)
 
 handleMarkerClick = (event)->
