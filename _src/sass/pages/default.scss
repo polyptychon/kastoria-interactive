@@ -9,3 +9,26 @@
   left: 50%;
   background: $brand-primary;
 }
+.info-gallery {
+  height: 50%;
+}
+.info-data {
+  height: 50%;
+  padding: 15px 40px;
+}
+.info-data-title {
+  h1 {
+    color: white;
+    font-size: 32px;
+    margin-bottom: 20px;
+    line-height: 1em;
+  }
+}
+.info-data-description {
+  &, p {
+    color: rgba(#f2f2f2, .9);
+    font-size: 22px;
+    letter-spacing: .03em;
+    line-height: 1.5em;
+  }
+}

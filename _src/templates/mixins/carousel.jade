@@ -33,37 +33,27 @@ mixin carousel(images, options, classes)
   - if (!Array.isArray(images)) images = [images]
 
   div.carousel.slide(
-    id=carouselId,
-    class=classes,
-    data-ride="responsive-carousel",
-    data-autoplay=autoplay,
-    data-load-next-previous=loadNextPrevious,
-    data-background-scale=backgroundScale,
-    data-scale-background-proportionally=scaleBackgroundProportionally,
-    data-img-stretch=imgStretch
-    data-bind-to-carousel=bindToCarousel
+  id=carouselId,
+  class=classes,
+  data-ride="carousel",
   )
     if (images.length>1 && useIndicators===true)
       ol.carousel-indicators
         each val, index in images
-          li(class=index==0 ? "active" : "", data-slide-to=index)
+          li(class=index==0 ? "active" : "", data-slide-to=index data-target="#"+carouselId)
 
     div.carousel-inner
       each img, index in images
         div.item(class=index==0 ? "active" : "")
-          if (img.mediaSrc)
-            div.carousel-media-control
-              a(href="#", data-media-type=img.mediaType || "vimeo", data-media-src=img.mediaSrc)
-                span.glyphicon.glyphicon-play
-          img(data-src=(typeof img == "string" ? img : img.src),
-              data-md-src=img.mdSrc?img.mdSrc:"",
-              data-sm-src=img.smSrc?img.smSrc:"",
-              data-xs-src=img.xsSrc?img.xsSrc:"")
+          .item-overlay
+          .item-image(style="background-image:url('#{img.src}')")
           if (img.caption)
-            .carousel-caption= img.caption
+            .carousel-caption!= img.caption
+            br
+            a.btn.btn-primary.text-uppercase(href="news-details.html") ΔΙΑΒΑΣΤΕ ΠΕΡΙΣΣΟΤΕΡΑ
 
     if (images.length>1 && useCarouselControls===true)
-      a.left.carousel-control(href="#", data-slide="prev")
+      a.left.carousel-control(href="#"+carouselId, data-slide="prev")
         span.glyphicon(class=previousIcon)
-      a.right.carousel-control(href="#", data-slide="next")
+      a.right.carousel-control(href="#"+carouselId, data-slide="next")
         span.glyphicon(class=nextIcon)

@@ -1,3 +1,5 @@
+include mixins/carousel
+
 - var mainMenuActiveIndex = -1;
 - var brandName = "kastoria-interactive";
 - var pageTitle = brandName;
@@ -8,4 +10,27 @@ html
   body
     .map(id="map")
     .info
+      .info-gallery
+        +carousel(
+          [
+            {
+              src: "assets/images/Sample-image-Ag-Anargiroi.jpg",
+              caption: ""
+            },
+            {
+              src: "assets/images/Sample-image-Ag-Anargiroi.jpg",
+              caption: ""
+            },
+            {
+              src: "assets/images/Sample-image-Ag-Anargiroi.jpg",
+              caption: ""
+            }
+          ],
+          {id: "homeCarousel"}
+        )
+      .info-data
+        .info-data-title
+          h1 Αγ. Ανάργυροι
+        .info-data-description
+          p Πρόκειται για τρίκλιτη ξυλόστεγη βασιλική που κτίστηκε το 10ο αιώνα. Ο φωταγωγός του μεσαίου κλίτους είναι ιδιαίτερα υπερυψωμένος, χαρακτηριστικό γνώρισμα των ναών της Καστοριάς. Τα κλίτη χωρίζονται με τοιχοποιίες, τις οποίες διατρυπούν τοξωτά ανοίγματα για τη μεταξύ τους επικοινωνία. Είναι ο μοναδικός ναός της πόλης, που σώζει περίτεχνο, γλυπτικό διάκοσμο (αμφικίονες, περιθυρώματα, επίκρανα κ.α.).
 include partials/footer
