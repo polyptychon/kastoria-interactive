@@ -10,7 +10,7 @@ if(kinect.open()) {
     server.listen(8000);
     console.log('Server listening on port 8000');
     console.log('Point your browser to http://localhost:8000');
-
+    app.use(express.static('builds/development'));
     app.get('/', function(req, res) {
         res.sendFile(__dirname + '/builds/development/index.html');
     });
