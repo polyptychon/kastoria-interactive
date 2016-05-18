@@ -7,11 +7,70 @@ require "bootstrap/assets/javascripts/bootstrap/dropdown"
 require "bootstrap/assets/javascripts/bootstrap/collapse"
 require "bootstrap/assets/javascripts/bootstrap/carousel"
 
+
+getRightHandRelativePosition = (user)->
+  rightHandRelativePosition = 5
+  if user.tracked
+    rightHandPosition = Math.floor(user.joints[11].depthX * 100)
+    torsoPosition = Math.floor(user.joints[1].depthX * 100)
+    rightHandRelativePosition = rightHandPosition - torsoPosition
+  return rightHandRelativePosition
+
+_bodyFrame = null
+checkNextGestureTimeouts = {
+  "0": -1,
+  "1": -1,
+  "2": -1,
+  "3": -1,
+  "4": -1,
+  "5": -1,
+}
+checkPreviousGestureTimeouts = {
+  "0": -1,
+  "1": -1,
+  "2": -1,
+  "3": -1,
+  "4": -1,
+  "5": -1,
+}
 socket = require('socket.io-client')('http://localhost:8000');
 
 socket.on('bodyFrame', (bodyFrame)->
-  console.log(bodyFrame)
+  _bodyFrame = bodyFrame
+  bodyFrame.bodies.forEach((user,index)->
+    trackUser(user,index)
+  )
+  
 )
+
+trackUser = (user, index)->
+  if user.tracked
+    rightHandRelativePosition = getRightHandRelativePosition(user)
+    if rightHandRelativePosition>15
+      clearTimeout(checkNextGestureTimeouts[index])
+      checkNextGestureTimeouts[index] = setTimeout(()->
+        clearTimeout(checkNextGestureTimeouts[index])
+        checkNextGesture(rightHandRelativePosition, index)
+      , 300)
+
+    if rightHandRelativePosition<=0
+      clearTimeout(checkPreviousGestureTimeouts[index])
+      checkPreviousGestureTimeouts[index] = setTimeout(()->
+        clearTimeout(checkPreviousGestureTimeouts[index])
+        checkPreviousGesture(rightHandRelativePosition, index)
+      , 300)  
+
+checkNextGesture = (oldPosition, index)->
+  rightHandRelativePosition = getRightHandRelativePosition(_bodyFrame.bodies[index])
+  speed = oldPosition-rightHandRelativePosition
+  if (speed>20)
+    selectNextMarker()
+
+checkPreviousGesture = (oldPosition, index)->
+  rightHandRelativePosition = getRightHandRelativePosition(_bodyFrame.bodies[index])
+  speed = rightHandRelativePosition+oldPosition
+  if (speed>20)
+    selectPreviousMarker()
 
 data = require('./data')
 GoogleMapsLoader = require('google-maps')
@@ -145,12 +204,14 @@ setData = (markerData)->
   $('.carousel').carousel()
 
 selectPreviousMarker = ()->
+  return if !selectedMarker
   marker = getMarkerByPosition(selectedMarker.getPosition())
   currentIndex = getData().indexOf(marker)
   previousIndex = if currentIndex-1<0 then getData().length-1 else currentIndex-1
   selectMarker(getData()[previousIndex])
 
 selectNextMarker = ()->
+  return if !selectedMarker
   marker = getMarkerByPosition(selectedMarker.getPosition())
   currentIndex = getData().indexOf(marker)
   nextIndex = if currentIndex+1>=getData().length then 0 else currentIndex+1
