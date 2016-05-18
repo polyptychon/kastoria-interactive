@@ -8,7 +8,12 @@ html
   head
     include partials/header
     script.
-      var FILTER = 'byzantina';
+      var categories = {
+        "BYZANTINA":"byzantina",
+        "METABYZANTINA":"metabyzantina",
+        "SYGXRONA":"sygxrona"
+      }
+      var FILTER = categories.BYZANTINA;
   body
     .map(id="map")
     .info
