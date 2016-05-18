@@ -117,12 +117,18 @@ selectMarker = (value) ->
 handleMarkerClick = (event)->
   selectMarker(event.latLng)
 
+getImageArrayFromData = (markerData)->
+  a = []
+  l = parseInt(markerData.properties.images, 10)
+  categorySlug = markerData.properties['category-slug']
+  slug = markerData.properties.slug
+  for num in [1..l]
+    a.push({src:"assets/photos/#{categorySlug}/#{slug}/image#{num}.jpg"})
+  return a
+
 setData = (markerData)->
   infoData = {
-    images:[
-      {src: "assets/images/Sample-image-Ag-Anargiroi.jpg"},
-      {src: "assets/images/Sample-image-Ag-Anargiroi.jpg"}
-    ],
+    images: getImageArrayFromData(markerData),
     title:markerData.properties.name,
     description:markerData.properties.description
   }
