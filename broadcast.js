@@ -12,10 +12,7 @@ if(kinect.open()) {
     console.log('Point your browser to http://localhost:8000');
 
     app.get('/', function(req, res) {
-        res.sendFile(__dirname + '/public/index.html');
-    });
-    app.get('/subscribe.js', function(req, res) {
-        res.sendFile(__dirname + '/public/subscribe.js');
+        res.sendFile(__dirname + '/builds/development/index.html');
     });
     kinect.on('bodyFrame', function(bodyFrame){
         io.sockets.emit('bodyFrame', bodyFrame);
