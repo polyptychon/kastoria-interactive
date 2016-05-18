@@ -61,12 +61,16 @@
   },
   "dependencies": {
     "animationframe": "git://github.com/HarrisSidiropoulos/animationframe",
+    "express": "~4.9.5",
     "google-maps": "^3.2.1",
     "jquery": "^2.1.1",
     "jquery-touch-events": "git+https://github.com/benmajor/jQuery-Touch-Events.git",
     "jquery.browser": "^0.1.0",
     "jquery.transit": "^0.9.12",
-    "photoswipe": "^4.0.7"
+    "kinect2": "^0.1.2",
+    "photoswipe": "^4.0.7",
+    "socket.io": "~1.1.0",
+    "socket.io-client": "^1.4.6"
   },
   "scripts": {
     "install": "napa",
