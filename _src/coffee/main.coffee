@@ -7,6 +7,12 @@ require "bootstrap/assets/javascripts/bootstrap/dropdown"
 require "bootstrap/assets/javascripts/bootstrap/collapse"
 require "bootstrap/assets/javascripts/bootstrap/carousel"
 
+socket = require('socket.io-client')('http://localhost:8000');
+
+socket.on('bodyFrame', (bodyFrame)->
+  console.log(bodyFrame)
+)
+
 data = require('./data')
 GoogleMapsLoader = require('google-maps')
 Keyboard = {
