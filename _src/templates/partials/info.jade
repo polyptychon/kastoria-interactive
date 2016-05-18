@@ -1,11 +1,11 @@
 include ../mixins/carousel
-- var images_ = images || []
-- var title_ = title || ''
-- var description_ = description || ''
+- var _images = images || []
+- var _title = title || ''
+- var _description = description || ''
 .info-gallery
-  +carousel(images_,{id: "homeCarousel"})
+  +carousel(_images,{id: "homeCarousel"})
 .info-data
   .info-data-title
-    h1=title_
+    h1=_title
   .info-data-description
-    p!=description_
+    p!=_description
