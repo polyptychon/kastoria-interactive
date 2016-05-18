@@ -9,7 +9,7 @@ require "bootstrap/assets/javascripts/bootstrap/carousel"
 
 data = require('./data')
 GoogleMapsLoader = require('google-maps')
-
+FILTER = 'byzantina'
 Keyboard = {
   ENTER: 13,
   SPACE: 32,
@@ -33,8 +33,8 @@ map = null
 google = null
 selectedMarker = null
 
-getData = (filter='byzantina') ->
-  data.filter((point) -> point.properties['category-slug']==filter)
+getData = () ->
+  data.filter((point) -> point.properties['category-slug']==FILTER)
 
 GoogleMapsLoader.load((g)->
   google = g
