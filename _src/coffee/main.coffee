@@ -33,11 +33,14 @@ map = null
 google = null
 selectedMarker = null
 
+getData = (filter='byzantina') ->
+  data.filter((point) -> point.properties['category-slug']==filter)
+
 GoogleMapsLoader.load((g)->
   google = g
   map = new google.maps.Map($('.map')[0], mapOptions)
   setMarkers()
-  google.maps.event.addListenerOnce(map,"bounds_changed", ()-> selectMarker(data[0].marker))
+  google.maps.event.addListenerOnce(map,"bounds_changed", ()-> selectMarker(getData()[0].marker))
   $(global).bind('keyup', handleKeyup)
 )
 
@@ -48,11 +51,12 @@ handleKeyup = (event)->
     selectNextMarker()
 
 setMarkers = ()->
-  data.forEach((point, index)->
-    setTimeout(()=>
-      addMarker(point)
-    , index * 100)
-  )
+  getData()
+    .forEach((point, index)->
+      setTimeout(()=>
+        addMarker(point)
+      , index * 100)
+    )
 
 round = (value) ->
   Math.round(value * 100000) / 100000
@@ -60,7 +64,7 @@ round = (value) ->
 getMarkerByPosition = (position) ->
   lat = position.lat()
   lng = position.lng()
-  filteredData = data.filter((point)->
+  filteredData = getData().filter((point)->
     return round(point.geometry.coordinates[1]) == round(lat) && round(point.geometry.coordinates[0]) == round(lng)
   )
   return if filteredData.length==1 then filteredData[0] else null
@@ -137,15 +141,15 @@ setData = (markerData)->
 
 selectPreviousMarker = ()->
   marker = getMarkerByPosition(selectedMarker.getPosition())
-  currentIndex = data.indexOf(marker)
-  previousIndex = if currentIndex-1<0 then data.length-1 else currentIndex-1
-  selectMarker(data[previousIndex])
+  currentIndex = getData().indexOf(marker)
+  previousIndex = if currentIndex-1<0 then getData().length-1 else currentIndex-1
+  selectMarker(getData()[previousIndex])
 
 selectNextMarker = ()->
   marker = getMarkerByPosition(selectedMarker.getPosition())
-  currentIndex = data.indexOf(marker)
-  nextIndex = if currentIndex+1>=data.length then 0 else currentIndex+1
-  selectMarker(data[nextIndex])
+  currentIndex = getData().indexOf(marker)
+  nextIndex = if currentIndex+1>=getData().length then 0 else currentIndex+1
+  selectMarker(getData()[nextIndex])
 
 panToCenter = (latlng) ->
   offsetx = - ($(global).width() - $('.info').width())/2
