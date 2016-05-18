@@ -34,8 +34,7 @@ mixin carousel(images, options, classes)
 
   div.carousel.slide(
   id=carouselId,
-  class=classes,
-  data-ride="carousel",
+  class=classes
   )
     if (images.length>1 && useIndicators===true)
       ol.carousel-indicators
