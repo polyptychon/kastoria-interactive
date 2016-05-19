@@ -40,7 +40,6 @@ socket.on('bodyFrame', (bodyFrame)->
   bodyFrame.bodies.forEach((user,index)->
     trackUser(user,index)
   )
-  
 )
 
 trackUser = (user, index)->
@@ -58,19 +57,17 @@ trackUser = (user, index)->
       checkPreviousGestureTimeouts[index] = setTimeout(()->
         clearTimeout(checkPreviousGestureTimeouts[index])
         checkPreviousGesture(rightHandRelativePosition, index)
-      , 300)  
+      , 300)
 
 checkNextGesture = (oldPosition, index)->
   rightHandRelativePosition = getRightHandRelativePosition(_bodyFrame.bodies[index])
   speed = oldPosition-rightHandRelativePosition
-  if (speed>20)
-    selectNextMarker()
+  selectNextMarker() if (speed>20)
 
 checkPreviousGesture = (oldPosition, index)->
   rightHandRelativePosition = getRightHandRelativePosition(_bodyFrame.bodies[index])
   speed = rightHandRelativePosition+oldPosition
-  if (speed>20)
-    selectPreviousMarker()
+  selectPreviousMarker() if (speed>20)
 
 data = require('./data')
 GoogleMapsLoader = require('google-maps')
