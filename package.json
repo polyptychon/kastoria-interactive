@@ -4,7 +4,7 @@
   "description": "kastoria-interactive.gr",
   "homepage": "https://github.com/polyptychon/kastoria-interactive",
   "bugs": "",
-  "main": "src/coffee/main.coffee",
+  "main": "main.js",
   "author": {
     "name": "Polyptychon",
     "email": "webadmin@polyptychon.gr"
