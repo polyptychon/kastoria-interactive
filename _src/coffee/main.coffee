@@ -33,13 +33,13 @@ checkPreviousGestureTimeouts = {
   "4": -1,
   "5": -1,
 }
-#socket = require('socket.io-client')('http://localhost:8000');
-#socket.on('bodyFrame', (bodyFrame)->
-#  _bodyFrame = bodyFrame
-#  bodyFrame.bodies.forEach((user,index)->
-#    trackUser(user,index)
-#  )
-#)
+socket = require('socket.io-client')('http://localhost:8000');
+socket.on('bodyFrame', (bodyFrame)->
+  _bodyFrame = bodyFrame
+  bodyFrame.bodies.forEach((user,index)->
+    trackUser(user,index)
+  )
+)
 
 trackUser = (user, index)->
   if user.tracked
