@@ -100,7 +100,7 @@ gulp.task('jade', function() {
     "pretty": env === DEVELOPMENT,
     "locals": {
       'acc': acc,
-      'data': ""
+      'data': require("./"+SRC+"/coffee/data.js"),
     }
   };
 

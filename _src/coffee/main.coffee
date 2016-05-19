@@ -33,14 +33,13 @@ checkPreviousGestureTimeouts = {
   "4": -1,
   "5": -1,
 }
-socket = require('socket.io-client')('http://localhost:8000');
-
-socket.on('bodyFrame', (bodyFrame)->
-  _bodyFrame = bodyFrame
-  bodyFrame.bodies.forEach((user,index)->
-    trackUser(user,index)
-  )
-)
+#socket = require('socket.io-client')('http://localhost:8000');
+#socket.on('bodyFrame', (bodyFrame)->
+#  _bodyFrame = bodyFrame
+#  bodyFrame.bodies.forEach((user,index)->
+#    trackUser(user,index)
+#  )
+#)
 
 trackUser = (user, index)->
   if user.tracked
@@ -177,7 +176,11 @@ selectMarker = (value) ->
     marker.setZIndex(1000)
     selectedMarker = marker
     marker.setIcon(getIcon('assets/images/church-yellow.png'))
-    setData(markerData)
+    index = data.indexOf(markerData)
+    $('.info-item.active').removeClass('active')
+    $('.info-item').eq(index).addClass('active')
+    $('.info-item').eq(index).find('.carousel').carousel()
+#    setData(markerData)
 
 handleMarkerClick = (event)->
   selectMarker(event.latLng)
