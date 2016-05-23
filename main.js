@@ -41,6 +41,10 @@ function createWindow () {
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/builds/development/index.html`)
 
+
+  const id = electron.powerSaveBlocker.start('prevent-display-sleep');
+  console.log(electron.powerSaveBlocker.isStarted(id));
+
   // Open the DevTools.
   //mainWindow.webContents.openDevTools()
 
@@ -50,6 +54,7 @@ function createWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null
+    electron.powerSaveBlocker.stop(id);
   })
 }
 

@@ -6,3 +6,4 @@ node_modules
 .env
 .idea
 filter.js
+npm-debug.log
