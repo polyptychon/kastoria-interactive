@@ -50,7 +50,7 @@ trackUser = (user, index)->
         clearTimeout(checkNextGestureTimeouts[index])
         clearTimeout(checkPreviousGestureTimeouts[index])
         checkNextGesture(rightHandRelativePosition, index)
-      , 300)
+      , 200)
 
     if rightHandRelativePosition<=0
       clearTimeout(checkPreviousGestureTimeouts[index])
@@ -58,7 +58,7 @@ trackUser = (user, index)->
         clearTimeout(checkPreviousGestureTimeouts[index])
         clearTimeout(checkNextGestureTimeouts[index])
         checkPreviousGesture(rightHandRelativePosition, index)
-      , 300)
+      , 200)
 
 checkNextGesture = (oldPosition, index)->
   rightHandRelativePosition = getRightHandRelativePosition(_bodyFrame.bodies[index])
