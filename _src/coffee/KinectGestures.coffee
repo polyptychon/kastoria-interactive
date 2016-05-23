@@ -1,5 +1,18 @@
-EventEmitter = require('events');
+EventEmitter = require('events')
 
+class KinectGesturesEmitter extends EventEmitter
+
+kinectGesturesEmitter = new KinectGesturesEmitter();
+
+getRightHandRelativePosition = (user)->
+  rightHandRelativePosition = 5
+  if user.tracked
+    rightHandPosition = Math.floor(user.joints[11].depthX * 100)
+    torsoPosition = Math.floor(user.joints[1].depthX * 100)
+    rightHandRelativePosition = rightHandPosition - torsoPosition
+  return rightHandRelativePosition
+
+_bodyFrame = null
 checkNextGestureTimeouts = {
   "0": -1,
   "1": -1,
@@ -16,55 +29,41 @@ checkPreviousGestureTimeouts = {
   "4": -1,
   "5": -1,
 }
-SWIPE_LEFT = "swipe_left"
-SWIPE_RIGHT = "swipe_right"
+socket = require('socket.io-client')('http://localhost:8000');
+socket.on('bodyFrame', (bodyFrame)->
+  _bodyFrame = bodyFrame
+  bodyFrame.bodies.forEach((user,index)->
+    trackUser(user,index)
+  )
+)
 
-class KinectGestures extends EventEmitter
-  constructor: (server='http://localhost:8000')->
-    @_bodyFrame = null
-    socket = require('socket.io-client')(server);
-    socket.on('bodyFrame', (bodyFrame)->
-      @_bodyFrame = bodyFrame
-      bodyFrame.bodies.forEach((user,index)->
-        @trackUser(user,index)
-      )
-    )
-
-  getRightHandRelativePosition = (user)->
-    rightHandRelativePosition = 5
-    if user.tracked
-      rightHandPosition = Math.floor(user.joints[11].depthX * 100)
-      torsoPosition = Math.floor(user.joints[1].depthX * 100)
-      rightHandRelativePosition = rightHandPosition - torsoPosition
-    return rightHandRelativePosition
-
-  trackUser = (user, index)->
-    if user.tracked
-      rightHandRelativePosition = getRightHandRelativePosition(user)
-      if rightHandRelativePosition>15
+trackUser = (user, index)->
+  if user.tracked
+    rightHandRelativePosition = getRightHandRelativePosition(user)
+    if rightHandRelativePosition>15
+      clearTimeout(checkNextGestureTimeouts[index])
+      checkNextGestureTimeouts[index] = setTimeout(()->
         clearTimeout(checkNextGestureTimeouts[index])
-        checkNextGestureTimeouts[index] = setTimeout(()=>
-          clearTimeout(checkNextGestureTimeouts[index])
-          clearTimeout(checkPreviousGestureTimeouts[index])
-          @checkNextGesture(rightHandRelativePosition, index)
-        , 200)
-
-      if rightHandRelativePosition<=0
         clearTimeout(checkPreviousGestureTimeouts[index])
-        checkPreviousGestureTimeouts[index] = setTimeout(()=>
-          clearTimeout(checkPreviousGestureTimeouts[index])
-          clearTimeout(checkNextGestureTimeouts[index])
-          @checkPreviousGesture(rightHandRelativePosition, index)
-        , 200)
+        checkNextGesture(rightHandRelativePosition, index)
+      , 200)
 
-  checkNextGesture = (oldPosition, index)->
-    rightHandRelativePosition = getRightHandRelativePosition(@_bodyFrame.bodies[index])
-    speed = oldPosition-rightHandRelativePosition
-    this.emit(SWIPE_LEFT) if (speed>20)
+    if rightHandRelativePosition<=0
+      clearTimeout(checkPreviousGestureTimeouts[index])
+      checkPreviousGestureTimeouts[index] = setTimeout(()->
+        clearTimeout(checkPreviousGestureTimeouts[index])
+        clearTimeout(checkNextGestureTimeouts[index])
+        checkPreviousGesture(rightHandRelativePosition, index)
+      , 200)
 
-  checkPreviousGesture = (oldPosition, index)->
-    rightHandRelativePosition = getRightHandRelativePosition(@_bodyFrame.bodies[index])
-    speed = rightHandRelativePosition+oldPosition
-    this.emit(SWIPE_RIGHT) if (speed>20)
+checkNextGesture = (oldPosition, index)->
+  rightHandRelativePosition = getRightHandRelativePosition(_bodyFrame.bodies[index])
+  speed = oldPosition-rightHandRelativePosition
+  kinectGesturesEmitter.emit('swipe_left') if (speed>20)
 
-module.export =  KinectGestures
+checkPreviousGesture = (oldPosition, index)->
+  rightHandRelativePosition = getRightHandRelativePosition(_bodyFrame.bodies[index])
+  speed = rightHandRelativePosition+oldPosition
+  kinectGesturesEmitter.emit('swipe_right') if (speed>20)
+
+module.exports = kinectGesturesEmitter

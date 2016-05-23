@@ -7,16 +7,12 @@ require "bootstrap/assets/javascripts/bootstrap/dropdown"
 require "bootstrap/assets/javascripts/bootstrap/collapse"
 require "bootstrap/assets/javascripts/bootstrap/carousel"
 
-KinectGestures = require('./KinectGestures.coffee')
-
-
-kinectGestures = new KinectGestures()
-
+kinectGestures = require('./KinectGestures.coffee')
 kinectGestures.on("swipe_left", ()->
   selectNextMarker()
 )
 kinectGestures.on("swipe_right", ()->
-  selectPreviousMarker()
+  selectNextMarker()
 )
 
 data = require('./data')
