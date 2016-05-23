@@ -7,7 +7,7 @@ require "bootstrap/assets/javascripts/bootstrap/dropdown"
 require "bootstrap/assets/javascripts/bootstrap/collapse"
 require "bootstrap/assets/javascripts/bootstrap/carousel"
 
-KinectGestures = require('./KinectGestures')
+KinectGestures = require('./KinectGestures.coffee')
 
 
 kinectGestures = new KinectGestures()
