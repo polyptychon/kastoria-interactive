@@ -73,6 +73,13 @@ var acc = function (t) {
   return t.toUpperCase();
 };
 
+var filter = "";
+try {
+  filter = require('./filter');
+} catch(e) {
+  console.log("filter.js was not found!")
+  filter = "byzantina";
+}
 var env = process.env.NODE_ENV || DEVELOPMENT;
 if (env!==DEVELOPMENT) env = PRODUCTION;
 
@@ -100,6 +107,7 @@ gulp.task('jade', function() {
     "pretty": env === DEVELOPMENT,
     "locals": {
       'acc': acc,
+      'filter': filter || 'byzantina',
       'data': require("./"+SRC+"/coffee/data.js"),
     }
   };
