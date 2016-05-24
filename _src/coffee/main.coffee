@@ -40,7 +40,7 @@ kinectGestures.on("swipe_left", ()->
   selectNextMarker()
 )
 kinectGestures.on("swipe_right", ()->
-  selectNextMarker()
+  selectPreviousMarker()
 )
 kinectGestures.on("swipe_in", ()->
   console.log("swipe_in")
