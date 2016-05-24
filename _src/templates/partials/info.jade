@@ -2,7 +2,7 @@ include ../mixins/carousel
 - var _images = images || []
 - var _title = title || ''
 - var _description = description || ''
-- var getImageArrayFromData = function(markerData) { var a, categorySlug, i, l, num, ref, slug; a = [];l = parseInt(markerData.properties.images, 10);categorySlug = markerData.properties['category-slug'];slug = markerData.properties.slug;for (num = i = 1, ref = l; 1 <= ref ? i <= ref : i >= ref; num = 1 <= ref ? ++i : --i) {a.push({src: "assets/photos/" + categorySlug + "/" + slug + "/image" + num + ".jpg"});}return a;};
+- var getImageArrayFromData = function(markerData) { var a, categorySlug, i, l, num, ref, slug; a = [];l = parseInt(markerData.properties.images, 10);categorySlug = markerData.properties['category-slug'];slug = markerData.properties.slug;for (num = i = 1, ref = l; 1 <= ref ? i <= ref : i >= ref; num = 1 <= ref ? ++i : --i) {a.push({src: "assets/photos/" + categorySlug + "/" + slug + "/Image" + num + ".jpg"});}return a;};
 
 each markerData,index in locals.data
   .info-item
