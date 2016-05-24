@@ -84,7 +84,7 @@ trackUser = (user, index)->
           clearTimeout(disableSwipeRightTimeout)
           disableSwipeRightTimeout = setTimeout(
             ()-> disableSwipeRight=false
-          , 1500)
+          , 1000)
 
         if !disableSwipeIn && (rightHandXSpeed>=15 && leftHandXSpeed>=10) && (Math.abs(rightHandYSpeed) - Math.abs(leftHandYSpeed))<10
           kinectGesturesEmitter.emit('swipe_in')
@@ -117,7 +117,7 @@ trackUser = (user, index)->
           clearTimeout(disableSwipeLeftTimeout)
           disableSwipeLeftTimeout = setTimeout(
             ()-> disableSwipeLeft=false
-          , 1500)
+          , 1000)
         if !disableSwipeOut && (rightHandXSpeed>=15 && leftHandXSpeed>=10) && (Math.abs(rightHandYSpeed)>15 && Math.abs(leftHandYSpeed)>10)
           kinectGesturesEmitter.emit('swipe_out')
           disableSwipeIn = true
