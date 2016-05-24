@@ -66,6 +66,7 @@ handleKeyup = (event)->
 setGalleryMode = ()->
   $('body').addClass('gallery-zoom')
   $('.info-item.active').find('.carousel').carousel({interval:1000000000})
+  $('.info-item.active').find('.carousel').carousel('pause')
 
 unsetGalleryMode = ()->
   $('body').removeClass('gallery-zoom')
@@ -150,6 +151,7 @@ selectMarker = (value) ->
     marker.setIcon(getIcon('assets/images/church-yellow.png'))
     index = data.indexOf(markerData)
     $('.info-item.active').find('.carousel').carousel({interval:1000000000})
+    $('.info-item.active').find('.carousel').carousel('pause')
     $('.info-item.active').removeClass('active')
     $('.info-item').eq(index).addClass('active')
     $('.info-item').eq(index).find('.carousel').carousel({interval:5000})
