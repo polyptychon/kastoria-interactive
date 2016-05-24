@@ -5,22 +5,8 @@ class KinectGesturesEmitter extends EventEmitter
 kinectGesturesEmitter = new KinectGesturesEmitter();
 
 _bodyFrame = null
-checkNextGestureTimeouts = {
-  "0": -1,
-  "1": -1,
-  "2": -1,
-  "3": -1,
-  "4": -1,
-  "5": -1,
-}
-checkPreviousGestureTimeouts = {
-  "0": -1,
-  "1": -1,
-  "2": -1,
-  "3": -1,
-  "4": -1,
-  "5": -1,
-}
+checkNextGestureTimeouts = {}
+checkPreviousGestureTimeouts = {}
 
 socket = require('socket.io-client')('http://localhost:8000');
 socket.on('bodyFrame', (bodyFrame)->
