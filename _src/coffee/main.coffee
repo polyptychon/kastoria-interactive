@@ -166,7 +166,7 @@ getImageArrayFromData = (markerData)->
   categorySlug = markerData.properties['category-slug']
   slug = markerData.properties.slug
   for num in [1..l]
-    a.push({src:"assets/photos/#{categorySlug}/#{slug}/image#{num}.jpg"})
+    a.push({src:"assets/photos/#{categorySlug}/#{slug}/Image#{num}.jpg"})
   return a
 
 setData = (markerData)->
