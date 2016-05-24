@@ -53,6 +53,10 @@ handleKeyup = (event)->
     selectPreviousMarker()
   else if (event.keyCode==Keyboard.NEXT)
     selectNextMarker()
+  else if (event.keyCode==Keyboard.UP)
+    console.log(Keyboard.UP)
+  else if (event.keyCode==Keyboard.DOWN)
+    console.log(Keyboard.DOWN)
 
 getData = () ->
   data.filter((point) -> point.properties['category-slug']==FILTER && FILTER!='')

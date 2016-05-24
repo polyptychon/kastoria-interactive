@@ -16,7 +16,7 @@ socket.on('bodyFrame', (bodyFrame)->
   )
 )
 
-getHandRelativePosition = (user, hand=11)->
+getRelativePosition = (user, hand=11)->
   handRelativePosition = 5
   if user.tracked
     handPosition = Math.floor(user.joints[hand].depthX * 100)
@@ -25,17 +25,20 @@ getHandRelativePosition = (user, hand=11)->
   return handRelativePosition
 
 getRightHandRelativePosition = (user)->
-  return getHandRelativePosition(user)
+  return getRelativePosition(user)
 
 getLeftHandRelativePosition = (user)->
-  return getHandRelativePosition(user, 7)
+  return getRelativePosition(user, 7)
+
+getHeadRelativePosition = (user)->
+  return getRelativePosition(user, 3)
 
 trackUser = (user, index)->
   if user.tracked
     oldRightHandRelativePosition = getRightHandRelativePosition(user)
     oldLeftHandRelativePosition = Math.abs(getLeftHandRelativePosition(user))
-
-    if oldRightHandRelativePosition>15 && oldLeftHandRelativePosition>15
+    headPosition = getHeadRelativePosition(user)
+    if oldRightHandRelativePosition>15 && oldLeftHandRelativePosition>15 && (headPosition>=0 && headPosition<=2)
       clearTimeout(checkNextGestureTimeouts[index])
       checkNextGestureTimeouts[index] = setTimeout(()->
         clearTimeout(checkNextGestureTimeouts[index])
@@ -45,10 +48,10 @@ trackUser = (user, index)->
         rightHandSpeed = oldRightHandRelativePosition - newRightHandRelativePosition
         leftHandSpeed = oldLeftHandRelativePosition - newLeftHandRelativePosition
         kinectGesturesEmitter.emit('swipe_left') if (rightHandSpeed>=20 && leftHandSpeed<10)
-        kinectGesturesEmitter.emit('swipe_in') if (rightHandSpeed>=20 && leftHandSpeed>=14)
+        kinectGesturesEmitter.emit('swipe_in') if (rightHandSpeed>=15 && leftHandSpeed>=15)
       , 200)
 
-    if oldRightHandRelativePosition<=0 || (oldRightHandRelativePosition && oldLeftHandRelativePosition<=0)
+    if (oldRightHandRelativePosition<=0 || (oldRightHandRelativePosition && oldLeftHandRelativePosition<=0)) && (headPosition>=0 && headPosition<=2)
       clearTimeout(checkPreviousGestureTimeouts[index])
       checkPreviousGestureTimeouts[index] = setTimeout(()->
         clearTimeout(checkPreviousGestureTimeouts[index])
@@ -58,7 +61,7 @@ trackUser = (user, index)->
         rightHandSpeed = newRightHandRelativePosition + oldRightHandRelativePosition
         leftHandSpeed = newLeftHandRelativePosition - oldLeftHandRelativePosition
         kinectGesturesEmitter.emit('swipe_right') if (rightHandSpeed>=20 && leftHandSpeed<10)
-        kinectGesturesEmitter.emit('swipe_out') if (rightHandSpeed>=20 && leftHandSpeed>=14)
+        kinectGesturesEmitter.emit('swipe_out') if (rightHandSpeed>=15 && leftHandSpeed>=15)
       , 200)
 
 module.exports = kinectGesturesEmitter
