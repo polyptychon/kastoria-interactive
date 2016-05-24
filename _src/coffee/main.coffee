@@ -42,6 +42,12 @@ kinectGestures.on("swipe_left", ()->
 kinectGestures.on("swipe_right", ()->
   selectNextMarker()
 )
+kinectGestures.on("swipe_in", ()->
+  console.log("swipe_in")
+)
+kinectGestures.on("swipe_out", ()->
+  console.log("swipe_out")
+)
 handleKeyup = (event)->
   if (event.keyCode==Keyboard.PREVIOUS)
     selectPreviousMarker()
