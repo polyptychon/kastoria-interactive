@@ -43,11 +43,11 @@ kinectGestures.on("swipe_right", ()->
   selectPreviousMarker() if !$('body').hasClass('gallery-zoom')
 )
 kinectGestures.on("swipe_in", ()->
-  console.log("swipe_in")
+#  console.log("swipe_in")
   $('body').removeClass('gallery-zoom')
 )
 kinectGestures.on("swipe_out", ()->
-  console.log("swipe_out")
+#  console.log("swipe_out")
   $('body').addClass('gallery-zoom')
 )
 handleKeyup = (event)->
