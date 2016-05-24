@@ -75,7 +75,8 @@
   },
   "scripts": {
     "install": "napa",
-    "start": "electron main.js"
+    "start": "electron main.js",
+    "server": "node broadcast.js"
   },
   "napa": {
     "bootstrap": "twbs/bootstrap-sass",
