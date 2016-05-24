@@ -7,14 +7,8 @@ kinectGesturesEmitter = new KinectGesturesEmitter();
 _bodyFrame = null
 checkNextGestureTimeouts = {}
 checkPreviousGestureTimeouts = {}
-disableSwipeLeft = false
-disableSwipeRight = false
-disableSwipeIn = false
-disableSwipeOut = false
-disableSwipeLeftTimeout = -1
-disableSwipeRightTimeout = -1
-disableSwipeInTimeout = -1
-disableSwipeOutTimeout = -1
+areGesturesDisabled = false
+disableGesturesTimeout = -1
 
 socket = require('socket.io-client')('http://localhost:8000');
 socket.on('bodyFrame', (bodyFrame)->
@@ -32,34 +26,27 @@ getRelativeXPosition = (user, hand=11)->
     relativePosition = position - torsoPosition
   return relativePosition
 
-getRelativeYPosition = (user, hand=11)->
-  if user.tracked
-    return Math.floor(user.joints[hand].depthY * 100)
-  else
-    return -1
-
 getRightHandRelativeXPosition = (user)->
   return getRelativeXPosition(user)
 
 getLeftHandRelativeXPosition = (user)->
   return getRelativeXPosition(user, 7)
 
-getRightHandRelativeYPosition = (user)->
-  return getRelativeYPosition(user)
-
-getLeftHandRelativeYPosition = (user)->
-  return getRelativeYPosition(user, 7)
-
 getHeadRelativeXPosition = (user)->
   return getRelativeXPosition(user, 3)
+
+disableTemporaryGestures = ()->
+  return if areGesturesDisabled
+  areGesturesDisabled = true
+  clearTimeout(disableGesturesTimeout)
+  disableGesturesTimeout = setTimeout(
+    ()-> areGesturesDisabled=false
+  , 1000)
 
 trackUser = (user, index)->
   if user.tracked
     oldRightHandRelativeXPosition = getRightHandRelativeXPosition(user)
     oldLeftHandRelativeXPosition = Math.abs(getLeftHandRelativeXPosition(user))
-
-    oldRightHandRelativeYPosition = getRightHandRelativeYPosition(user)
-    oldLeftHandRelativeYPosition = getLeftHandRelativeYPosition(user)
 
     headXPosition = getHeadRelativeXPosition(user)
     if oldRightHandRelativeXPosition>15 && oldLeftHandRelativeXPosition>15 && (headXPosition>=-2 && headXPosition<=2)
@@ -73,27 +60,14 @@ trackUser = (user, index)->
         rightHandXSpeed = oldRightHandRelativeXPosition - newRightHandRelativeXPosition
         leftHandXSpeed = oldLeftHandRelativeXPosition - newLeftHandRelativeXPosition
 
-        newRightHandRelativeYPosition = getRightHandRelativeYPosition(_bodyFrame.bodies[index])
-        newLeftHandRelativeYPosition = getLeftHandRelativeYPosition(_bodyFrame.bodies[index])
-        rightHandYSpeed = newRightHandRelativeYPosition - oldRightHandRelativeYPosition
-        leftHandYSpeed = newLeftHandRelativeYPosition - oldLeftHandRelativeYPosition
-
-        if !disableSwipeLeft && (rightHandXSpeed>=20 && leftHandXSpeed<10)
+        if !areGesturesDisabled && (rightHandXSpeed>=20 && leftHandXSpeed<10) && (headXPosition>=-2 && headXPosition<=2)
           kinectGesturesEmitter.emit('swipe_left')
-          disableSwipeRight = true
-          clearTimeout(disableSwipeRightTimeout)
-          disableSwipeRightTimeout = setTimeout(
-            ()-> disableSwipeRight=false
-          , 1000)
+          disableTemporaryGestures()
 
-        if !disableSwipeIn && (rightHandXSpeed>=15 && leftHandXSpeed>=10) && (Math.abs(rightHandYSpeed) - Math.abs(leftHandYSpeed))<10
+        if !areGesturesDisabled && (rightHandXSpeed>=20 && leftHandXSpeed>10) && (headXPosition>=-2 && headXPosition<=2)
           kinectGesturesEmitter.emit('swipe_in')
-          disableSwipeOut = true
-          clearTimeout(disableSwipeOutTimeout)
-          disableSwipeOutTimeout = setTimeout(
-            ()-> disableSwipeOut=false
-          , 1000)
-      , 300)
+          disableTemporaryGestures()
+      , 350)
 
     if (oldRightHandRelativeXPosition<=0 || (oldRightHandRelativeXPosition && oldLeftHandRelativeXPosition<=0)) && (headXPosition>=-2 && headXPosition<=2)
       clearTimeout(checkPreviousGestureTimeouts[index])
@@ -106,26 +80,14 @@ trackUser = (user, index)->
         rightHandXSpeed = newRightHandRelativeXPosition + oldRightHandRelativeXPosition
         leftHandXSpeed = newLeftHandRelativeXPosition - oldLeftHandRelativeXPosition
 
-        newRightHandRelativeYPosition = getRightHandRelativeYPosition(_bodyFrame.bodies[index])
-        newLeftHandRelativeYPosition = getLeftHandRelativeYPosition(_bodyFrame.bodies[index])
-        rightHandYSpeed = newRightHandRelativeYPosition - oldRightHandRelativeYPosition
-        leftHandYSpeed = newLeftHandRelativeYPosition - oldLeftHandRelativeYPosition
-
-        if !disableSwipeRight && (rightHandXSpeed>=20 && leftHandXSpeed<10)
+        if !areGesturesDisabled && (rightHandXSpeed>=20 && leftHandXSpeed<10) && (headXPosition>=-2 && headXPosition<=2)
           kinectGesturesEmitter.emit('swipe_right')
-          disableSwipeLeft = true
-          clearTimeout(disableSwipeLeftTimeout)
-          disableSwipeLeftTimeout = setTimeout(
-            ()-> disableSwipeLeft=false
-          , 1000)
-        if !disableSwipeOut && (rightHandXSpeed>=15 && leftHandXSpeed>=10) && (Math.abs(rightHandYSpeed)>15 && Math.abs(leftHandYSpeed)>10)
-          kinectGesturesEmitter.emit('swipe_out')
-          disableSwipeIn = true
-          clearTimeout(disableSwipeInTimeout)
-          disableSwipeInTimeout = setTimeout(
-            ()-> disableSwipeIn=false
-          , 1000)
+          disableTemporaryGestures()
 
-      , 300)
+        if !areGesturesDisabled && (rightHandXSpeed>=20 && leftHandXSpeed>10) && (headXPosition>=-2 && headXPosition<=2)
+          kinectGesturesEmitter.emit('swipe_out')
+          disableTemporaryGestures()
+
+      , 350)
 
 module.exports = kinectGesturesEmitter
