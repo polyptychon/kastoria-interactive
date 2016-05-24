@@ -37,16 +37,18 @@ selectedMarker = null
 
 
 kinectGestures.on("swipe_left", ()->
-  selectNextMarker()
+  selectNextMarker() if !$('body').hasClass('gallery-zoom')
 )
 kinectGestures.on("swipe_right", ()->
-  selectPreviousMarker()
+  selectPreviousMarker() if !$('body').hasClass('gallery-zoom')
 )
 kinectGestures.on("swipe_in", ()->
   console.log("swipe_in")
+  $('body').removeClass('gallery-zoom')
 )
 kinectGestures.on("swipe_out", ()->
   console.log("swipe_out")
+  $('body').addClass('gallery-zoom')
 )
 handleKeyup = (event)->
   if (event.keyCode==Keyboard.PREVIOUS)
@@ -55,8 +57,10 @@ handleKeyup = (event)->
     selectNextMarker()
   else if (event.keyCode==Keyboard.UP)
     console.log(Keyboard.UP)
+    $('body').addClass('gallery-zoom')
   else if (event.keyCode==Keyboard.DOWN)
     console.log(Keyboard.DOWN)
+    $('body').removeClass('gallery-zoom')
 
 getData = () ->
   data.filter((point) -> point.properties['category-slug']==FILTER && FILTER!='')
