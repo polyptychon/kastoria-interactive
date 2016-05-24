@@ -38,29 +38,38 @@ selectedMarker = null
 
 kinectGestures.on("swipe_left", ()->
   selectNextMarker() if !$('body').hasClass('gallery-zoom')
+  $('.info-item.active').find('.carousel').carousel('next') if $('body').hasClass('gallery-zoom')
 )
 kinectGestures.on("swipe_right", ()->
   selectPreviousMarker() if !$('body').hasClass('gallery-zoom')
+  $('.info-item.active').find('.carousel').carousel('prev') if $('body').hasClass('gallery-zoom')
 )
 kinectGestures.on("swipe_in", ()->
-#  console.log("swipe_in")
-  $('body').removeClass('gallery-zoom')
+  unsetGalleryMode()
 )
 kinectGestures.on("swipe_out", ()->
-#  console.log("swipe_out")
-  $('body').addClass('gallery-zoom')
+  setGalleryMode()
 )
 handleKeyup = (event)->
   if (event.keyCode==Keyboard.PREVIOUS)
-    selectPreviousMarker()
+    selectPreviousMarker() if !$('body').hasClass('gallery-zoom')
+    $('.info-item.active').find('.carousel').carousel('prev') if $('body').hasClass('gallery-zoom')
   else if (event.keyCode==Keyboard.NEXT)
-    selectNextMarker()
+    selectNextMarker() if !$('body').hasClass('gallery-zoom')
+    $('.info-item.active').find('.carousel').carousel('next') if $('body').hasClass('gallery-zoom')
   else if (event.keyCode==Keyboard.UP)
-    console.log(Keyboard.UP)
-    $('body').addClass('gallery-zoom')
+    setGalleryMode()
   else if (event.keyCode==Keyboard.DOWN)
-    console.log(Keyboard.DOWN)
-    $('body').removeClass('gallery-zoom')
+    unsetGalleryMode()
+
+
+setGalleryMode = ()->
+  $('body').addClass('gallery-zoom')
+  $('.info-item.active').find('.carousel').carousel({interval:1000000000})
+
+unsetGalleryMode = ()->
+  $('body').removeClass('gallery-zoom')
+  $('.info-item.active').find('.carousel').carousel({interval:5000})
 
 getData = () ->
   data.filter((point) -> point.properties['category-slug']==FILTER && FILTER!='')
@@ -140,9 +149,10 @@ selectMarker = (value) ->
     selectedMarker = marker
     marker.setIcon(getIcon('assets/images/church-yellow.png'))
     index = data.indexOf(markerData)
+    $('.info-item.active').find('.carousel').carousel({interval:1000000000})
     $('.info-item.active').removeClass('active')
     $('.info-item').eq(index).addClass('active')
-    $('.info-item').eq(index).find('.carousel').carousel()
+    $('.info-item').eq(index).find('.carousel').carousel({interval:5000})
 #    setData(markerData)
 
 handleMarkerClick = (event)->
