@@ -8,14 +8,8 @@ require "bootstrap/assets/javascripts/bootstrap/collapse"
 require "bootstrap/assets/javascripts/bootstrap/carousel"
 
 kinectGestures = require('./KinectGestures.coffee')
-kinectGestures.on("swipe_left", ()->
-  selectNextMarker()
-)
-kinectGestures.on("swipe_right", ()->
-  selectNextMarker()
-)
-
 data = require('./data')
+
 GoogleMapsLoader = require('google-maps')
 Keyboard = {
   ENTER: 13,
@@ -41,6 +35,19 @@ map = null
 google = null
 selectedMarker = null
 
+
+kinectGestures.on("swipe_left", ()->
+  selectNextMarker()
+)
+kinectGestures.on("swipe_right", ()->
+  selectNextMarker()
+)
+handleKeyup = (event)->
+  if (event.keyCode==Keyboard.PREVIOUS)
+    selectPreviousMarker()
+  else if (event.keyCode==Keyboard.NEXT)
+    selectNextMarker()
+
 getData = () ->
   data.filter((point) -> point.properties['category-slug']==FILTER && FILTER!='')
 
@@ -51,12 +58,6 @@ GoogleMapsLoader.load((g)->
   google.maps.event.addListenerOnce(map,"bounds_changed", ()-> selectMarker(getData()[0].marker))
   $(global).bind('keyup', handleKeyup)
 )
-
-handleKeyup = (event)->
-  if (event.keyCode==Keyboard.PREVIOUS)
-    selectPreviousMarker()
-  else if (event.keyCode==Keyboard.NEXT)
-    selectNextMarker()
 
 setMarkers = ()->
   getData()
