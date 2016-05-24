@@ -92,7 +92,7 @@ trackUser = (user, index)->
           clearTimeout(disableSwipeOutTimeout)
           disableSwipeOutTimeout = setTimeout(
             ()-> disableSwipeOut=false
-          , 1500)
+          , 1000)
       , 300)
 
     if (oldRightHandRelativeXPosition<=0 || (oldRightHandRelativeXPosition && oldLeftHandRelativeXPosition<=0)) && (headXPosition>=-2 && headXPosition<=2)
@@ -124,7 +124,7 @@ trackUser = (user, index)->
           clearTimeout(disableSwipeInTimeout)
           disableSwipeInTimeout = setTimeout(
             ()-> disableSwipeIn=false
-          , 1500)
+          , 1000)
 
       , 300)
 
