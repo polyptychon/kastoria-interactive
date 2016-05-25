@@ -60,8 +60,6 @@ trackUser = (user, index)->
         rightHandXSpeed = oldRightHandRelativeXPosition - newRightHandRelativeXPosition
         leftHandXSpeed = oldLeftHandRelativeXPosition - newLeftHandRelativeXPosition
 
-        console.log(areGesturesDisabled, rightHandXSpeed, leftHandXSpeed)
-
         if !areGesturesDisabled && (rightHandXSpeed>=22 && leftHandXSpeed<5) && (headXPosition>=-2 && headXPosition<=2)
           kinectGesturesEmitter.emit('swipe_left')
           disableTemporaryGestures()
