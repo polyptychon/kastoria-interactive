@@ -62,13 +62,22 @@ handleKeyup = (event)->
   else if (event.keyCode==Keyboard.DOWN)
     unsetGalleryMode()
 
+zoomingTimeout = -1
+smoothZoom = ()->
+  $('body').addClass('gallery-zooming')
+  clearTimeout(zoomingTimeout)
+  zoomingTimeout = setInterval(()->
+    $('body').removeClass('gallery-zooming')
+  , 500)
 
 setGalleryMode = ()->
+  smoothZoom()
   $('body').addClass('gallery-zoom')
   $('.info-item.active').find('.carousel').carousel({interval:1000000000})
   $('.info-item.active').find('.carousel').carousel('pause')
 
 unsetGalleryMode = ()->
+  smoothZoom()
   $('body').removeClass('gallery-zoom')
   $('.info-item.active').find('.carousel').carousel({interval:5000})
 

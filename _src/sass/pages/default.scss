@@ -62,7 +62,16 @@ $map-width: 100%;
     left: 0;
     width: 100%;
   }
+
   .info-gallery {
     height: 100%;
+  }
+}
+.gallery-zooming {
+  .info-item {
+    display: none;
+    &.active {
+      display: block;
+    }
   }
 }
