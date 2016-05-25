@@ -41,7 +41,7 @@ disableTemporaryGestures = ()->
   clearTimeout(disableGesturesTimeout)
   disableGesturesTimeout = setTimeout(
     ()-> areGesturesDisabled=false
-  , 1000)
+  , 1200)
 
 trackUser = (user, index)->
   if user.tracked
@@ -60,14 +60,16 @@ trackUser = (user, index)->
         rightHandXSpeed = oldRightHandRelativeXPosition - newRightHandRelativeXPosition
         leftHandXSpeed = oldLeftHandRelativeXPosition - newLeftHandRelativeXPosition
 
-        if !areGesturesDisabled && (rightHandXSpeed>=20 && leftHandXSpeed<10) && (headXPosition>=-2 && headXPosition<=2)
+        console.log(areGesturesDisabled, rightHandXSpeed, leftHandXSpeed)
+
+        if !areGesturesDisabled && (rightHandXSpeed>=22 && leftHandXSpeed<5) && (headXPosition>=-2 && headXPosition<=2)
           kinectGesturesEmitter.emit('swipe_left')
           disableTemporaryGestures()
 
-        if !areGesturesDisabled && (rightHandXSpeed>=20 && leftHandXSpeed>10) && (headXPosition>=-2 && headXPosition<=2)
+        if !areGesturesDisabled && (rightHandXSpeed>=20 && leftHandXSpeed>=10) && (headXPosition>=-2 && headXPosition<=2)
           kinectGesturesEmitter.emit('swipe_in')
           disableTemporaryGestures()
-      , 350)
+      , 300)
 
     if (oldRightHandRelativeXPosition<=0 || (oldRightHandRelativeXPosition && oldLeftHandRelativeXPosition<=0)) && (headXPosition>=-2 && headXPosition<=2)
       clearTimeout(checkPreviousGestureTimeouts[index])
@@ -80,14 +82,16 @@ trackUser = (user, index)->
         rightHandXSpeed = newRightHandRelativeXPosition + oldRightHandRelativeXPosition
         leftHandXSpeed = newLeftHandRelativeXPosition - oldLeftHandRelativeXPosition
 
-        if !areGesturesDisabled && (rightHandXSpeed>=20 && leftHandXSpeed<10) && (headXPosition>=-2 && headXPosition<=2)
+        console.log(areGesturesDisabled, rightHandXSpeed, leftHandXSpeed)
+
+        if !areGesturesDisabled && (rightHandXSpeed>=22 && leftHandXSpeed<5) && (headXPosition>=-2 && headXPosition<=2)
           kinectGesturesEmitter.emit('swipe_right')
           disableTemporaryGestures()
 
-        if !areGesturesDisabled && (rightHandXSpeed>=20 && leftHandXSpeed>10) && (headXPosition>=-2 && headXPosition<=2)
+        if !areGesturesDisabled && (rightHandXSpeed>=25 && leftHandXSpeed>=25) && (headXPosition>=-2 && headXPosition<=2)
           kinectGesturesEmitter.emit('swipe_out')
           disableTemporaryGestures()
 
-      , 350)
+      , 300)
 
 module.exports = kinectGesturesEmitter
