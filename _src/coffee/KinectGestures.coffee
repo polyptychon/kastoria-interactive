@@ -53,7 +53,7 @@ trackUser = (user, index)->
     oldLeftHandRelativeXPosition = Math.abs(getLeftHandRelativeXPosition(user))
 
     headXPosition = getHeadRelativeXPosition(user)
-    if (oldRightHandRelativeXPosition>20 || (oldRightHandRelativeXPosition>=25 && oldLeftHandRelativeXPosition>=25)) && (headXPosition>=-2 && headXPosition<=2)
+    if (oldRightHandRelativeXPosition>20 || (oldRightHandRelativeXPosition>=20 && oldLeftHandRelativeXPosition>=20)) && (headXPosition>=-2 && headXPosition<=2)
       clearTimeout(checkNextGestureTimeouts[index])
       checkNextGestureTimeouts[index] = setTimeout(()->
 
