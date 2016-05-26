@@ -47,10 +47,9 @@ trackUser = (user, index)->
   if user.tracked
     oldRightHandRelativeXPosition = getRightHandRelativeXPosition(user)
     oldLeftHandRelativeXPosition = Math.abs(getLeftHandRelativeXPosition(user))
-    console.debug(oldRightHandRelativeXPosition, oldLeftHandRelativeXPosition)
 
     headXPosition = getHeadRelativeXPosition(user)
-    if oldRightHandRelativeXPosition>15 && oldLeftHandRelativeXPosition>15 && (headXPosition>=-2 && headXPosition<=2)
+    if (oldRightHandRelativeXPosition>20 || (oldRightHandRelativeXPosition>=25 && oldLeftHandRelativeXPosition>=25)) && (headXPosition>=-2 && headXPosition<=2)
       clearTimeout(checkNextGestureTimeouts[index])
       checkNextGestureTimeouts[index] = setTimeout(()->
         clearTimeout(checkNextGestureTimeouts[index])
@@ -70,7 +69,7 @@ trackUser = (user, index)->
           disableTemporaryGestures()
       , 300)
 
-    if (oldRightHandRelativeXPosition<=0 || oldLeftHandRelativeXPosition>=30 || (oldRightHandRelativeXPosition<=0 && oldLeftHandRelativeXPosition<=0)) && (headXPosition>=-2 && headXPosition<=2)
+    if (oldLeftHandRelativeXPosition<=5 || (oldRightHandRelativeXPosition<=5 && oldLeftHandRelativeXPosition<=5)) && (headXPosition>=-2 && headXPosition<=2)
       clearTimeout(checkPreviousGestureTimeouts[index])
       checkPreviousGestureTimeouts[index] = setTimeout(()->
         clearTimeout(checkPreviousGestureTimeouts[index])
@@ -81,13 +80,13 @@ trackUser = (user, index)->
         rightHandXSpeed = newRightHandRelativeXPosition - oldRightHandRelativeXPosition
         leftHandXSpeed = newLeftHandRelativeXPosition - oldLeftHandRelativeXPosition
 
-        console.log(areGesturesDisabled, rightHandXSpeed, leftHandXSpeed)
+        console.log(leftHandXSpeed, rightHandXSpeed)
 
-        if !areGesturesDisabled && (Math.abs(leftHandXSpeed)>=22 && (rightHandXSpeed>-5 && rightHandXSpeed<5)) && (headXPosition>=-2 && headXPosition<=2)
+        if !areGesturesDisabled && (Math.abs(leftHandXSpeed)>=15 && (rightHandXSpeed>-5 && rightHandXSpeed<5)) && (headXPosition>=-2 && headXPosition<=2)
           kinectGesturesEmitter.emit('swipe_right')
           disableTemporaryGestures()
 
-        if !areGesturesDisabled && (rightHandXSpeed<=-10 && leftHandXSpeed<=-10) && (headXPosition>=-2 && headXPosition<=2)
+        if !areGesturesDisabled && (rightHandXSpeed>=25 && leftHandXSpeed>=25) && (headXPosition>=-2 && headXPosition<=2)
           kinectGesturesEmitter.emit('swipe_out')
           disableTemporaryGestures()
 
