@@ -47,7 +47,7 @@ trackUser = (user, index)->
   if user.tracked
     oldRightHandRelativeXPosition = getRightHandRelativeXPosition(user)
     oldLeftHandRelativeXPosition = Math.abs(getLeftHandRelativeXPosition(user))
-#    console.debug(oldRightHandRelativeXPosition, oldLeftHandRelativeXPosition)
+    console.debug(oldRightHandRelativeXPosition, oldLeftHandRelativeXPosition)
 
     headXPosition = getHeadRelativeXPosition(user)
     if oldRightHandRelativeXPosition>15 && oldLeftHandRelativeXPosition>15 && (headXPosition>=-2 && headXPosition<=2)
@@ -70,7 +70,7 @@ trackUser = (user, index)->
           disableTemporaryGestures()
       , 300)
 
-    if (oldRightHandRelativeXPosition<=0 || oldLeftHandRelativeXPosition>=30 || (oldRightHandRelativeXPosition && oldLeftHandRelativeXPosition<=0)) && (headXPosition>=-2 && headXPosition<=2)
+    if (oldRightHandRelativeXPosition<=0 || oldLeftHandRelativeXPosition>=30 || (oldRightHandRelativeXPosition<=0 && oldLeftHandRelativeXPosition<=0)) && (headXPosition>=-2 && headXPosition<=2)
       clearTimeout(checkPreviousGestureTimeouts[index])
       checkPreviousGestureTimeouts[index] = setTimeout(()->
         clearTimeout(checkPreviousGestureTimeouts[index])
