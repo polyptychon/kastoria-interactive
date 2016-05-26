@@ -43,6 +43,10 @@ disableTemporaryGestures = ()->
     ()-> areGesturesDisabled=false
   , 500)
 
+clearTimeOuts = (index)->
+  clearTimeout(checkNextGestureTimeouts[index])
+  clearTimeout(checkPreviousGestureTimeouts[index])
+
 trackUser = (user, index)->
   if user.tracked
     oldRightHandRelativeXPosition = getRightHandRelativeXPosition(user)
@@ -52,8 +56,6 @@ trackUser = (user, index)->
     if (oldRightHandRelativeXPosition>20 || (oldRightHandRelativeXPosition>=25 && oldLeftHandRelativeXPosition>=25)) && (headXPosition>=-2 && headXPosition<=2)
       clearTimeout(checkNextGestureTimeouts[index])
       checkNextGestureTimeouts[index] = setTimeout(()->
-        clearTimeout(checkNextGestureTimeouts[index])
-        clearTimeout(checkPreviousGestureTimeouts[index])
 
         newRightHandRelativeXPosition = getRightHandRelativeXPosition(_bodyFrame.bodies[index])
         newLeftHandRelativeXPosition = Math.abs(getLeftHandRelativeXPosition(_bodyFrame.bodies[index]))
@@ -63,17 +65,17 @@ trackUser = (user, index)->
         if !areGesturesDisabled && (rightHandXSpeed>=20 && (leftHandXSpeed>-5 && leftHandXSpeed<5)) && (headXPosition>=-2 && headXPosition<=2)
           kinectGesturesEmitter.emit('swipe_left')
           disableTemporaryGestures()
+          clearTimeOuts(index)
 
         if !areGesturesDisabled && (rightHandXSpeed>=20 && leftHandXSpeed>=10) && (headXPosition>=-2 && headXPosition<=2)
           kinectGesturesEmitter.emit('swipe_in')
           disableTemporaryGestures()
+          clearTimeOuts(index)
       , 300)
 
     if (oldLeftHandRelativeXPosition<=5 || (oldRightHandRelativeXPosition<=5 && oldLeftHandRelativeXPosition<=5)) && (headXPosition>=-2 && headXPosition<=2)
       clearTimeout(checkPreviousGestureTimeouts[index])
       checkPreviousGestureTimeouts[index] = setTimeout(()->
-        clearTimeout(checkPreviousGestureTimeouts[index])
-        clearTimeout(checkNextGestureTimeouts[index])
 
         newRightHandRelativeXPosition = getRightHandRelativeXPosition(_bodyFrame.bodies[index])
         newLeftHandRelativeXPosition = Math.abs(getLeftHandRelativeXPosition(_bodyFrame.bodies[index]))
@@ -83,10 +85,12 @@ trackUser = (user, index)->
         if !areGesturesDisabled && (Math.abs(leftHandXSpeed)>=15 && (rightHandXSpeed>-5 && rightHandXSpeed<5)) && (headXPosition>=-2 && headXPosition<=2)
           kinectGesturesEmitter.emit('swipe_right')
           disableTemporaryGestures()
+          clearTimeOuts(index)
 
         if !areGesturesDisabled && (rightHandXSpeed>=25 && leftHandXSpeed>=25) && (headXPosition>=-2 && headXPosition<=2)
           kinectGesturesEmitter.emit('swipe_out')
           disableTemporaryGestures()
+          clearTimeOuts(index)
 
       , 300)
 
