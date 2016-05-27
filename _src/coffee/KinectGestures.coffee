@@ -112,7 +112,7 @@ pauseGesture = (gesture)->
   isGesturePaused[gesture] = true
   isGestureDisabledTimeout = setTimeout(()->
     isGesturePaused[gesture] = false
-  , 1500)
+  , 1200)
 
 trackUser = (user, index)->
   trackEvent(user, index, SWIPE_IN, startTrackSwipeInEvent, isSwipeInEventHappening, SWIPE_OUT)
