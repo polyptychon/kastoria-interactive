@@ -2,13 +2,17 @@ EventEmitter = require('events')
 
 class KinectGesturesEmitter extends EventEmitter
 
+SWIPE_IN    = "swipe_in"
+SWIPE_OUT   = "swipe_out"
+SWIPE_LEFT  = "swipe_left"
+SWIPE_RIGHT = "swipe_right"
+
 kinectGesturesEmitter = new KinectGesturesEmitter();
 
 _bodyFrame = null
-checkNextGestureTimeouts = {}
-checkPreviousGestureTimeouts = {}
-areGesturesDisabled = false
-disableGesturesTimeout = -1
+checkGestureTimeouts = {}
+isGestureDisabledTimeout = -1
+isGestureDisabled = {}
 
 socket = require('socket.io-client')('http://localhost:8000');
 socket.on('bodyFrame', (bodyFrame)->
@@ -35,6 +39,9 @@ getLeftHandRelativeXPosition = (user)->
 getHeadRelativeXPosition = (user)->
   return getRelativeXPosition(user, 3)
 
+isHeadLooking = (positionX)->
+  (positionX>=-2 and positionX<=2)
+
 isLeftHandStretched = (positionX)->
   positionX>20
 
@@ -56,87 +63,85 @@ isRightHandStretching = (oldPositionX, positionX)->
   speed>=12
 
 isLeftHandClosing = (oldPositionX, positionX)->
-  speed = oldPositionX - positionX
-  speed>=20
+  speed = Math.abs(oldPositionX - positionX)
+  speed>=14
 
 isRightHandClosing = (oldPositionX, positionX)->
   speed = oldPositionX - positionX
   speed>=20
 
-disableTemporaryGestures = ()->
-  return if areGesturesDisabled
-  areGesturesDisabled = true
-  clearTimeout(disableGesturesTimeout)
-  disableGesturesTimeout = setTimeout(
-    ()-> areGesturesDisabled=false
-  , 500)
+HandPositions = (oldLeftHandRelativeXPosition, oldRightHandRelativeXPosition, headPositionX)->
+  this.isLeftHandStretched = isLeftHandStretched(oldLeftHandRelativeXPosition)
+  this.isRightHandStretched = isRightHandStretched(oldRightHandRelativeXPosition)
+  this.isLeftHandClosed = isLeftHandClosed(oldLeftHandRelativeXPosition)
+  this.isRightHandClosed = isRightHandClosed(oldRightHandRelativeXPosition)
+  this.isHeadLooking = isHeadLooking(headPositionX)
 
-clearTimeOuts = (index)->
-  clearTimeout(checkNextGestureTimeouts[index])
-  clearTimeout(checkPreviousGestureTimeouts[index])
+HandPositionsMovements = (oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition, oldRightHandRelativeXPosition, newRightHandRelativeXPosition, headPositionX)->
+  this.isLeftHandClosing = isLeftHandClosing(oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition)
+  this.isRightHandClosing = isRightHandClosing(oldRightHandRelativeXPosition, newRightHandRelativeXPosition)
+  this.isLeftHandStretching = isLeftHandStretching(oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition)
+  this.isRightHandStretching = isRightHandStretching(oldRightHandRelativeXPosition, newRightHandRelativeXPosition)
+  this.isHeadLooking = isHeadLooking(headPositionX)
+
+disableGesture = (gesture)->
+  isGestureDisabled[gesture] = true
+  isGestureDisabledTimeout = setTimeout(()->
+    isGestureDisabled[gesture] = false
+  , 1500)
 
 trackUser = (user, index)->
   if user.tracked
-    oldRightHandRelativeXPosition = getRightHandRelativeXPosition(user)
     oldLeftHandRelativeXPosition = Math.abs(getLeftHandRelativeXPosition(user))
-
+    oldRightHandRelativeXPosition = getRightHandRelativeXPosition(user)
     headXPosition = getHeadRelativeXPosition(user)
 
-    console.table({
-      isLeftHandStretched: isLeftHandStretched(oldLeftHandRelativeXPosition)
-      isRightHandStretched: isRightHandStretched(oldRightHandRelativeXPosition)
-      isLeftHandClosed: isLeftHandClosed(oldLeftHandRelativeXPosition)
-      isRightHandClosed: isRightHandClosed(oldRightHandRelativeXPosition)
-    })
+    p = new HandPositions(oldLeftHandRelativeXPosition, oldRightHandRelativeXPosition, headXPosition)
 
-    if (oldRightHandRelativeXPosition>20 || (oldRightHandRelativeXPosition>=20 && oldLeftHandRelativeXPosition>=20)) && (headXPosition>=-2 && headXPosition<=2)
-      clearTimeout(checkNextGestureTimeouts[index])
-      checkNextGestureTimeouts[index] = setTimeout(()->
+    if ((p.isRightHandStretched and !p.isLeftHandStretched) or (p.isLeftHandStretched and !p.isRightHandStretched) or (p.isLeftHandClosed and p.isRightHandClosed)) and p.isHeadLooking
 
-        newRightHandRelativeXPosition = getRightHandRelativeXPosition(_bodyFrame.bodies[index])
-        newLeftHandRelativeXPosition = Math.abs(getLeftHandRelativeXPosition(_bodyFrame.bodies[index]))
-        rightHandXSpeed = oldRightHandRelativeXPosition - newRightHandRelativeXPosition
-        leftHandXSpeed = oldLeftHandRelativeXPosition - newLeftHandRelativeXPosition
+      clearTimeout(checkGestureTimeouts[index])
 
-        console.table({
-          isLeftHandClosing: isLeftHandClosing(oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition)
-          isRightHandClosing: isRightHandClosing(oldRightHandRelativeXPosition, newRightHandRelativeXPosition)
-        })
+      checkGestureTimeouts[index] = setTimeout(()->
+        user = _bodyFrame.bodies[index]
+        newLeftHandRelativeXPosition = Math.abs(getLeftHandRelativeXPosition(user))
+        newRightHandRelativeXPosition = getRightHandRelativeXPosition(user)
+        headXPosition = getHeadRelativeXPosition(user)
+        p = new HandPositions(newLeftHandRelativeXPosition, newRightHandRelativeXPosition, headXPosition)
+        m = new HandPositionsMovements(oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition, oldRightHandRelativeXPosition, newRightHandRelativeXPosition, headXPosition)
 
-        if !areGesturesDisabled && (rightHandXSpeed>=20 && (leftHandXSpeed>-5 && leftHandXSpeed<5)) && (headXPosition>=-2 && headXPosition<=2)
-          kinectGesturesEmitter.emit('swipe_left')
-          disableTemporaryGestures()
-          clearTimeOuts(index)
+        if !isGestureDisabled[SWIPE_OUT]
+          if m.isRightHandStretching and m.isLeftHandStretching and m.isHeadLooking
+            kinectGesturesEmitter.emit(SWIPE_OUT)
+            disableGesture(SWIPE_IN)
+            clearTimeout(checkGestureTimeouts[index])
 
-        if !areGesturesDisabled && (rightHandXSpeed>=20 && leftHandXSpeed>=10) && (headXPosition>=-2 && headXPosition<=2)
-          kinectGesturesEmitter.emit('swipe_in')
-          disableTemporaryGestures()
-          clearTimeOuts(index)
+          else if !isGestureDisabled[SWIPE_LEFT] and m.isRightHandClosing and !m.isLeftHandClosing and m.isHeadLooking
+            kinectGesturesEmitter.emit(SWIPE_LEFT)
+            clearTimeout(checkGestureTimeouts[index])
+
+          else if !isGestureDisabled[SWIPE_RIGHT] and m.isLeftHandClosing and !m.isRightHandClosing and m.isHeadLooking
+            kinectGesturesEmitter.emit(SWIPE_RIGHT)
+            clearTimeout(checkGestureTimeouts[index])
+
       , 300)
 
-    if (oldLeftHandRelativeXPosition<=5 || (oldRightHandRelativeXPosition<=5 && oldLeftHandRelativeXPosition<=5)) && (headXPosition>=-2 && headXPosition<=2)
-      clearTimeout(checkPreviousGestureTimeouts[index])
-      checkPreviousGestureTimeouts[index] = setTimeout(()->
+    if (p.isRightHandStretched and p.isLeftHandStretched) and p.isHeadLooking
 
-        newRightHandRelativeXPosition = getRightHandRelativeXPosition(_bodyFrame.bodies[index])
-        newLeftHandRelativeXPosition = Math.abs(getLeftHandRelativeXPosition(_bodyFrame.bodies[index]))
-        rightHandXSpeed = newRightHandRelativeXPosition - oldRightHandRelativeXPosition
-        leftHandXSpeed = newLeftHandRelativeXPosition - oldLeftHandRelativeXPosition
+      clearTimeout(checkGestureTimeouts[index][SWIPE_IN])
 
-        console.table({
-          isLeftHandStretching: isLeftHandStretching(oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition)
-          isRightHandStretching: isRightHandStretching(oldRightHandRelativeXPosition, newRightHandRelativeXPosition)
-        })
+      checkGestureTimeouts[index][SWIPE_IN] = setTimeout(()->
+        user = _bodyFrame.bodies[index]
+        newLeftHandRelativeXPosition = Math.abs(getLeftHandRelativeXPosition(user))
+        newRightHandRelativeXPosition = getRightHandRelativeXPosition(user)
+        headXPosition = getHeadRelativeXPosition(user)
 
-        if !areGesturesDisabled && (Math.abs(leftHandXSpeed)>=12 && (rightHandXSpeed>-5 && rightHandXSpeed<5)) && (headXPosition>=-2 && headXPosition<=2)
-          kinectGesturesEmitter.emit('swipe_right')
-          disableTemporaryGestures()
-          clearTimeOuts(index)
+        m = new HandPositionsMovements(oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition, oldRightHandRelativeXPosition, newRightHandRelativeXPosition, headXPosition)
 
-        if !areGesturesDisabled && (rightHandXSpeed>=25 && leftHandXSpeed>=25) && (headXPosition>=-2 && headXPosition<=2)
-          kinectGesturesEmitter.emit('swipe_out')
-          disableTemporaryGestures()
-          clearTimeOuts(index)
+        if !isGestureDisabled[SWIPE_IN] and m.isLeftHandClosing and m.isRightHandClosing and m.isHeadLooking
+          kinectGesturesEmitter.emit(SWIPE_IN)
+          disableGesture(SWIPE_OUT)
+          clearTimeout(checkGestureTimeouts[index][SWIPE_IN])
 
       , 300)
 
