@@ -142,7 +142,7 @@ trackEvent = (user, index, eventName, shouldTrackEvent, isEventHappening, pauseE
         m = new HandPositionsMovements(oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition, oldRightHandRelativeXPosition, newRightHandRelativeXPosition, headXPosition)
 
         if !isGesturePaused["ALL"]
-          if !isGesturePaused[SWIPE_IN] and isEventHappening.call(m) and m.isHeadLooking
+          if !isGesturePaused[pauseEventName] and isEventHappening.call(m) and m.isHeadLooking
             kinectGesturesEmitter.emit(eventName)
             pauseGesture(pauseEventName) if pauseEventName
             pauseGesture("ALL") if shouldPauseAllEvents
