@@ -110,8 +110,8 @@ trackUser = (user, index)->
         p = new HandPositions(newLeftHandRelativeXPosition, newRightHandRelativeXPosition, headXPosition)
         m = new HandPositionsMovements(oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition, oldRightHandRelativeXPosition, newRightHandRelativeXPosition, headXPosition)
 
-        if !isGestureDisabled[SWIPE_OUT]
-          if m.isRightHandStretching and m.isLeftHandStretching and m.isHeadLooking
+        if !isGestureDisabled["ALL"]
+          if !isGestureDisabled[SWIPE_OUT] and m.isRightHandStretching and m.isLeftHandStretching and m.isHeadLooking
             kinectGesturesEmitter.emit(SWIPE_OUT)
             disableGesture(SWIPE_IN)
             clearTimeout(checkGestureTimeouts[index])
@@ -138,10 +138,12 @@ trackUser = (user, index)->
 
         m = new HandPositionsMovements(oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition, oldRightHandRelativeXPosition, newRightHandRelativeXPosition, headXPosition)
 
-        if !isGestureDisabled[SWIPE_IN] and m.isLeftHandClosing and m.isRightHandClosing and m.isHeadLooking
-          kinectGesturesEmitter.emit(SWIPE_IN)
-          disableGesture(SWIPE_OUT)
-          clearTimeout(checkGestureTimeouts[index][SWIPE_IN])
+        if !isGestureDisabled["ALL"]
+          if !isGestureDisabled[SWIPE_IN] and m.isLeftHandClosing and m.isRightHandClosing and m.isHeadLooking
+            kinectGesturesEmitter.emit(SWIPE_IN)
+            disableGesture(SWIPE_OUT)
+            disableGesture("ALL")
+            clearTimeout(checkGestureTimeouts[index][SWIPE_IN])
 
       , 300)
 
