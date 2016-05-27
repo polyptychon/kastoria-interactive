@@ -115,7 +115,7 @@ pauseGesture = (gesture)->
   , 1500)
 
 trackUser = (user, index)->
-  trackEvent(user, index, SWIPE_IN, startTrackSwipeInEvent, isSwipeInEventHappening, SWIPE_OUT, true)
+  trackEvent(user, index, SWIPE_IN, startTrackSwipeInEvent, isSwipeInEventHappening, SWIPE_OUT)
   trackEvent(user, index, SWIPE_OUT, startTrackSwipeOutEvent, isSwipeOutEventHappening, SWIPE_IN)
   trackEvent(user, index, SWIPE_LEFT, startTrackSwipeLeftEvent, isSwipeLeftEventHappening)
   trackEvent(user, index, SWIPE_RIGHT, startTrackSwipeRightEvent, isSwipeRightEventHappening)
@@ -131,6 +131,7 @@ trackEvent = (user, index, eventName, shouldTrackEvent, isEventHappening, pauseE
 
     if shouldTrackEvent(p) and p.isHeadLooking
 
+      checkGestureTimeouts[index] = {} if !checkGestureTimeouts[index]?
       clearTimeout(checkGestureTimeouts[index][eventName])
 
       checkGestureTimeouts[index][eventName] = setTimeout(()->
