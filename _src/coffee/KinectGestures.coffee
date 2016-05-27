@@ -35,6 +35,34 @@ getLeftHandRelativeXPosition = (user)->
 getHeadRelativeXPosition = (user)->
   return getRelativeXPosition(user, 3)
 
+isLeftHandStretched = (positionX)->
+  positionX>20
+
+isRightHandStretched = (positionX)->
+  positionX>20
+
+isLeftHandClosed = (positionX)->
+  positionX<5
+
+isRightHandClosed = (positionX)->
+  positionX<5
+
+isLeftHandStretching = (oldPositionX, positionX)->
+  speed = positionX - oldPositionX
+  speed>=12
+
+isRightHandStretching = (oldPositionX, positionX)->
+  speed = positionX - oldPositionX
+  speed>=12
+
+isLeftHandClosing = (oldPositionX, positionX)->
+  speed = oldPositionX - positionX
+  speed>=20
+
+isRightHandClosing = (oldPositionX, positionX)->
+  speed = oldPositionX - positionX
+  speed>=20
+
 disableTemporaryGestures = ()->
   return if areGesturesDisabled
   areGesturesDisabled = true
@@ -53,6 +81,14 @@ trackUser = (user, index)->
     oldLeftHandRelativeXPosition = Math.abs(getLeftHandRelativeXPosition(user))
 
     headXPosition = getHeadRelativeXPosition(user)
+
+    console.table({
+      isLeftHandStretched: isLeftHandStretched(oldLeftHandRelativeXPosition)
+      isRightHandStretched: isRightHandStretched(oldRightHandRelativeXPosition)
+      isLeftHandClosed: isLeftHandClosed(oldLeftHandRelativeXPosition)
+      isRightHandClosed: isRightHandClosed(oldRightHandRelativeXPosition)
+    })
+
     if (oldRightHandRelativeXPosition>20 || (oldRightHandRelativeXPosition>=20 && oldLeftHandRelativeXPosition>=20)) && (headXPosition>=-2 && headXPosition<=2)
       clearTimeout(checkNextGestureTimeouts[index])
       checkNextGestureTimeouts[index] = setTimeout(()->
@@ -61,6 +97,11 @@ trackUser = (user, index)->
         newLeftHandRelativeXPosition = Math.abs(getLeftHandRelativeXPosition(_bodyFrame.bodies[index]))
         rightHandXSpeed = oldRightHandRelativeXPosition - newRightHandRelativeXPosition
         leftHandXSpeed = oldLeftHandRelativeXPosition - newLeftHandRelativeXPosition
+
+        console.table({
+          isLeftHandClosing: isLeftHandClosing(oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition)
+          isRightHandClosing: isRightHandClosing(oldRightHandRelativeXPosition, newRightHandRelativeXPosition)
+        })
 
         if !areGesturesDisabled && (rightHandXSpeed>=20 && (leftHandXSpeed>-5 && leftHandXSpeed<5)) && (headXPosition>=-2 && headXPosition<=2)
           kinectGesturesEmitter.emit('swipe_left')
@@ -81,6 +122,11 @@ trackUser = (user, index)->
         newLeftHandRelativeXPosition = Math.abs(getLeftHandRelativeXPosition(_bodyFrame.bodies[index]))
         rightHandXSpeed = newRightHandRelativeXPosition - oldRightHandRelativeXPosition
         leftHandXSpeed = newLeftHandRelativeXPosition - oldLeftHandRelativeXPosition
+
+        console.table({
+          isLeftHandStretching: isLeftHandStretching(oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition)
+          isRightHandStretching: isRightHandStretching(oldRightHandRelativeXPosition, newRightHandRelativeXPosition)
+        })
 
         if !areGesturesDisabled && (Math.abs(leftHandXSpeed)>=12 && (rightHandXSpeed>-5 && rightHandXSpeed<5)) && (headXPosition>=-2 && headXPosition<=2)
           kinectGesturesEmitter.emit('swipe_right')
