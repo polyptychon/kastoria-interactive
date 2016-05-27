@@ -107,7 +107,7 @@ trackUser = (user, index)->
         newLeftHandRelativeXPosition = Math.abs(getLeftHandRelativeXPosition(user))
         newRightHandRelativeXPosition = getRightHandRelativeXPosition(user)
         headXPosition = getHeadRelativeXPosition(user)
-        p = new HandPositions(newLeftHandRelativeXPosition, newRightHandRelativeXPosition, headXPosition)
+        
         m = new HandPositionsMovements(oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition, oldRightHandRelativeXPosition, newRightHandRelativeXPosition, headXPosition)
 
         if !isGesturePaused["ALL"]
