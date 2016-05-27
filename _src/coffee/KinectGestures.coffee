@@ -70,6 +70,30 @@ isRightHandClosing = (oldPositionX, positionX)->
   speed = oldPositionX - positionX
   speed>=20
 
+startTrackSwipeInEvent = (p)->
+  p.isRightHandStretched and p.isLeftHandStretched
+
+isSwipeInEventHappening = (m)->
+  m.isLeftHandClosing and m.isRightHandClosing
+
+startTrackSwipeOutEvent = (p)->
+  p.isLeftHandClosed and p.isRightHandClosed
+
+isSwipeOutEventHappening = (m)->
+  m.isRightHandStretching and m.isLeftHandStretching
+
+startTrackSwipeLeftEvent = (p)->
+  p.isRightHandStretched and !p.isLeftHandStretched
+
+isSwipeLeftEventHappening = (m)->
+  m.isRightHandClosing and !m.isLeftHandClosing
+
+startTrackSwipeRightEvent = (p)->
+  p.isLeftHandStretched and !p.isRightHandStretched
+
+isSwipeRightEventHappening = (m)->
+  m.isLeftHandClosing and !m.isRightHandClosing
+
 HandPositions = (oldLeftHandRelativeXPosition, oldRightHandRelativeXPosition, headPositionX)->
   this.isLeftHandStretched = isLeftHandStretched(oldLeftHandRelativeXPosition)
   this.isRightHandStretched = isRightHandStretched(oldRightHandRelativeXPosition)
@@ -91,44 +115,23 @@ pauseGesture = (gesture)->
   , 1500)
 
 trackUser = (user, index)->
+  trackEvent(user, index, SWIPE_IN, startTrackSwipeInEvent, isSwipeInEventHappening, SWIPE_OUT, true)
+  trackEvent(user, index, SWIPE_OUT, startTrackSwipeOutEvent, isSwipeOutEventHappening, SWIPE_IN)
+  trackEvent(user, index, SWIPE_LEFT, startTrackSwipeLeftEvent, isSwipeLeftEventHappening)
+  trackEvent(user, index, SWIPE_RIGHT, startTrackSwipeRightEvent, isSwipeRightEventHappening)
+
+
+trackEvent = (user, index, eventName, shouldTrackEvent, isEventHappening, pauseEventName, shouldPauseAllEvents=false)->
   if user.tracked
     oldLeftHandRelativeXPosition = Math.abs(getLeftHandRelativeXPosition(user))
     oldRightHandRelativeXPosition = getRightHandRelativeXPosition(user)
     headXPosition = getHeadRelativeXPosition(user)
 
     p = new HandPositions(oldLeftHandRelativeXPosition, oldRightHandRelativeXPosition, headXPosition)
+    
+    if shouldTrackEvent(p) and p.isHeadLooking
 
-    if ((p.isRightHandStretched and !p.isLeftHandStretched) or (p.isLeftHandStretched and !p.isRightHandStretched) or (p.isLeftHandClosed and p.isRightHandClosed)) and p.isHeadLooking
-
-      clearTimeout(checkGestureTimeouts[index])
-
-      checkGestureTimeouts[index] = setTimeout(()->
-        user = _bodyFrame.bodies[index]
-        newLeftHandRelativeXPosition = Math.abs(getLeftHandRelativeXPosition(user))
-        newRightHandRelativeXPosition = getRightHandRelativeXPosition(user)
-        headXPosition = getHeadRelativeXPosition(user)
-        
-        m = new HandPositionsMovements(oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition, oldRightHandRelativeXPosition, newRightHandRelativeXPosition, headXPosition)
-
-        if !isGesturePaused["ALL"]
-          if !isGesturePaused[SWIPE_OUT] and m.isRightHandStretching and m.isLeftHandStretching and m.isHeadLooking
-            kinectGesturesEmitter.emit(SWIPE_OUT)
-            pauseGesture(SWIPE_IN)
-            clearTimeout(checkGestureTimeouts[index])
-
-          else if !isGesturePaused[SWIPE_LEFT] and m.isRightHandClosing and !m.isLeftHandClosing and m.isHeadLooking
-            kinectGesturesEmitter.emit(SWIPE_LEFT)
-            clearTimeout(checkGestureTimeouts[index])
-
-          else if !isGesturePaused[SWIPE_RIGHT] and m.isLeftHandClosing and !m.isRightHandClosing and m.isHeadLooking
-            kinectGesturesEmitter.emit(SWIPE_RIGHT)
-            clearTimeout(checkGestureTimeouts[index])
-
-      , 300)
-
-    if (p.isRightHandStretched and p.isLeftHandStretched) and p.isHeadLooking
-
-      clearTimeout(checkGestureTimeouts[index][SWIPE_IN])
+      clearTimeout(checkGestureTimeouts[index][eventName])
 
       checkGestureTimeouts[index][SWIPE_IN] = setTimeout(()->
         user = _bodyFrame.bodies[index]
@@ -139,11 +142,11 @@ trackUser = (user, index)->
         m = new HandPositionsMovements(oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition, oldRightHandRelativeXPosition, newRightHandRelativeXPosition, headXPosition)
 
         if !isGesturePaused["ALL"]
-          if !isGesturePaused[SWIPE_IN] and m.isLeftHandClosing and m.isRightHandClosing and m.isHeadLooking
-            kinectGesturesEmitter.emit(SWIPE_IN)
-            pauseGesture(SWIPE_OUT)
-            pauseGesture("ALL")
-            clearTimeout(checkGestureTimeouts[index][SWIPE_IN])
+          if !isGesturePaused[SWIPE_IN] and isEventHappening(m) and m.isHeadLooking
+            kinectGesturesEmitter.emit(eventName)
+            pauseGesture(pauseEventName) if pauseEventName
+            pauseGesture("ALL") if shouldPauseAllEvents
+            clearTimeout(checkGestureTimeouts[index][eventName])
 
       , 300)
 
