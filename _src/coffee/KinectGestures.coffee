@@ -12,7 +12,7 @@ kinectGesturesEmitter = new KinectGesturesEmitter();
 _bodyFrame = null
 checkGestureTimeouts = {}
 isGestureDisabledTimeout = -1
-isGestureDisabled = {}
+isGesturePaused = {}
 
 socket = require('socket.io-client')('http://localhost:8000');
 socket.on('bodyFrame', (bodyFrame)->
@@ -84,10 +84,10 @@ HandPositionsMovements = (oldLeftHandRelativeXPosition, newLeftHandRelativeXPosi
   this.isRightHandStretching = isRightHandStretching(oldRightHandRelativeXPosition, newRightHandRelativeXPosition)
   this.isHeadLooking = isHeadLooking(headPositionX)
 
-disableGesture = (gesture)->
-  isGestureDisabled[gesture] = true
+pauseGesture = (gesture)->
+  isGesturePaused[gesture] = true
   isGestureDisabledTimeout = setTimeout(()->
-    isGestureDisabled[gesture] = false
+    isGesturePaused[gesture] = false
   , 1500)
 
 trackUser = (user, index)->
@@ -110,17 +110,17 @@ trackUser = (user, index)->
         p = new HandPositions(newLeftHandRelativeXPosition, newRightHandRelativeXPosition, headXPosition)
         m = new HandPositionsMovements(oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition, oldRightHandRelativeXPosition, newRightHandRelativeXPosition, headXPosition)
 
-        if !isGestureDisabled["ALL"]
-          if !isGestureDisabled[SWIPE_OUT] and m.isRightHandStretching and m.isLeftHandStretching and m.isHeadLooking
+        if !isGesturePaused["ALL"]
+          if !isGesturePaused[SWIPE_OUT] and m.isRightHandStretching and m.isLeftHandStretching and m.isHeadLooking
             kinectGesturesEmitter.emit(SWIPE_OUT)
-            disableGesture(SWIPE_IN)
+            pauseGesture(SWIPE_IN)
             clearTimeout(checkGestureTimeouts[index])
 
-          else if !isGestureDisabled[SWIPE_LEFT] and m.isRightHandClosing and !m.isLeftHandClosing and m.isHeadLooking
+          else if !isGesturePaused[SWIPE_LEFT] and m.isRightHandClosing and !m.isLeftHandClosing and m.isHeadLooking
             kinectGesturesEmitter.emit(SWIPE_LEFT)
             clearTimeout(checkGestureTimeouts[index])
 
-          else if !isGestureDisabled[SWIPE_RIGHT] and m.isLeftHandClosing and !m.isRightHandClosing and m.isHeadLooking
+          else if !isGesturePaused[SWIPE_RIGHT] and m.isLeftHandClosing and !m.isRightHandClosing and m.isHeadLooking
             kinectGesturesEmitter.emit(SWIPE_RIGHT)
             clearTimeout(checkGestureTimeouts[index])
 
@@ -138,11 +138,11 @@ trackUser = (user, index)->
 
         m = new HandPositionsMovements(oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition, oldRightHandRelativeXPosition, newRightHandRelativeXPosition, headXPosition)
 
-        if !isGestureDisabled["ALL"]
-          if !isGestureDisabled[SWIPE_IN] and m.isLeftHandClosing and m.isRightHandClosing and m.isHeadLooking
+        if !isGesturePaused["ALL"]
+          if !isGesturePaused[SWIPE_IN] and m.isLeftHandClosing and m.isRightHandClosing and m.isHeadLooking
             kinectGesturesEmitter.emit(SWIPE_IN)
-            disableGesture(SWIPE_OUT)
-            disableGesture("ALL")
+            pauseGesture(SWIPE_OUT)
+            pauseGesture("ALL")
             clearTimeout(checkGestureTimeouts[index][SWIPE_IN])
 
       , 300)
