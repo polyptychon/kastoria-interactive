@@ -22,7 +22,7 @@ socket.on('bodyFrame', (bodyFrame)->
   )
 )
 
-getRelativeXPosition = (user, hand=11)->
+getXPositionRelativeToTorso = (user, hand=11)->
   relativePosition = 5
   if user.tracked
     position = Math.floor(user.joints[hand].depthX * 100)
@@ -30,14 +30,14 @@ getRelativeXPosition = (user, hand=11)->
     relativePosition = position - torsoPosition
   return relativePosition
 
-getRightHandRelativeXPosition = (user)->
-  return getRelativeXPosition(user)
+getRightHandXPositionRelativeToTorso = (user)->
+  return getXPositionRelativeToTorso(user)
 
-getLeftHandRelativeXPosition = (user)->
-  return getRelativeXPosition(user, 7)
+getLeftHandXPositionRelativeToTorso = (user)->
+  return getXPositionRelativeToTorso(user, 7)
 
-getHeadRelativeXPosition = (user)->
-  return getRelativeXPosition(user, 3)
+getHeadXPositionRelativeToTorso = (user)->
+  return getXPositionRelativeToTorso(user, 3)
 
 isHeadLooking = (positionX)->
   (positionX>=-2 and positionX<=2)
@@ -70,25 +70,25 @@ isRightHandClosing = (oldPositionX, positionX)->
   speed = oldPositionX - positionX
   speed>=20
 
-startTrackSwipeInEvent = (p)->
+isSwipeInEventStarted = (p)->
   p.isRightHandStretched and p.isLeftHandStretched
 
 isSwipeInEventHappening = (m)->
   m.isLeftHandClosing and m.isRightHandClosing
 
-startTrackSwipeOutEvent = (p)->
+isSwipeOutEventStarted = (p)->
   p.isLeftHandClosed and p.isRightHandClosed
 
 isSwipeOutEventHappening = (m)->
   m.isRightHandStretching and m.isLeftHandStretching
 
-startTrackSwipeLeftEvent = (p)->
+isSwipeLeftEventStarted = (p)->
   p.isRightHandStretched and !p.isLeftHandStretched
 
 isSwipeLeftEventHappening = (m)->
   m.isRightHandClosing and !m.isLeftHandClosing
 
-startTrackSwipeRightEvent = (p)->
+isSwipeRightEventStarted = (p)->
   p.isLeftHandStretched and !p.isRightHandStretched
 
 isSwipeRightEventHappening = (m)->
@@ -115,17 +115,17 @@ pauseGesture = (gesture)->
   , 1200)
 
 trackUser = (user, index)->
-  trackEvent(user, index, SWIPE_IN, startTrackSwipeInEvent, isSwipeInEventHappening, SWIPE_OUT)
-  trackEvent(user, index, SWIPE_OUT, startTrackSwipeOutEvent, isSwipeOutEventHappening, SWIPE_IN)
-  trackEvent(user, index, SWIPE_LEFT, startTrackSwipeLeftEvent, isSwipeLeftEventHappening)
-  trackEvent(user, index, SWIPE_RIGHT, startTrackSwipeRightEvent, isSwipeRightEventHappening)
+  trackEvent(user, index, SWIPE_IN, isSwipeInEventStarted, isSwipeInEventHappening, SWIPE_OUT)
+  trackEvent(user, index, SWIPE_OUT, isSwipeOutEventStarted, isSwipeOutEventHappening, SWIPE_IN)
+  trackEvent(user, index, SWIPE_LEFT, isSwipeLeftEventStarted, isSwipeLeftEventHappening)
+  trackEvent(user, index, SWIPE_RIGHT, isSwipeRightEventStarted, isSwipeRightEventHappening)
 
 
-trackEvent = (user, index, eventName, shouldTrackEvent, isEventHappening, pauseEventName, shouldPauseAllEvents=false)->
+trackEvent = (user, index, eventName, shouldTrackEvent, isEventHappening, pauseEventName=null, shouldPauseAllEvents=false)->
   if user.tracked
-    oldLeftHandRelativeXPosition = Math.abs(getLeftHandRelativeXPosition(user))
-    oldRightHandRelativeXPosition = getRightHandRelativeXPosition(user)
-    headXPosition = getHeadRelativeXPosition(user)
+    oldLeftHandRelativeXPosition = Math.abs(getLeftHandXPositionRelativeToTorso(user))
+    oldRightHandRelativeXPosition = getRightHandXPositionRelativeToTorso(user)
+    headXPosition = getHeadXPositionRelativeToTorso(user)
 
     p = new HandPositions(oldLeftHandRelativeXPosition, oldRightHandRelativeXPosition, headXPosition)
 
@@ -136,9 +136,9 @@ trackEvent = (user, index, eventName, shouldTrackEvent, isEventHappening, pauseE
 
       checkGestureTimeouts[index][eventName] = setTimeout(()->
         user = _bodyFrame.bodies[index]
-        newLeftHandRelativeXPosition = Math.abs(getLeftHandRelativeXPosition(user))
-        newRightHandRelativeXPosition = getRightHandRelativeXPosition(user)
-        headXPosition = getHeadRelativeXPosition(user)
+        newLeftHandRelativeXPosition = Math.abs(getLeftHandXPositionRelativeToTorso(user))
+        newRightHandRelativeXPosition = getRightHandXPositionRelativeToTorso(user)
+        headXPosition = getHeadXPositionRelativeToTorso(user)
 
         m = new HandPositionsMovements(oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition, oldRightHandRelativeXPosition, newRightHandRelativeXPosition, headXPosition)
 
