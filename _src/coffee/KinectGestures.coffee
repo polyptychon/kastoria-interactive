@@ -22,10 +22,10 @@ socket.on('bodyFrame', (bodyFrame)->
   )
 )
 
-getXPositionRelativeToTorso = (user, hand=11)->
+getXPositionRelativeToTorso = (user, skeletonJoint=11)->
   relativePosition = 5
   if user.tracked
-    position = Math.floor(user.joints[hand].depthX * 100)
+    position = Math.floor(user.joints[skeletonJoint].depthX * 100)
     torsoPosition = Math.floor(user.joints[1].depthX * 100)
     relativePosition = position - torsoPosition
   return relativePosition
