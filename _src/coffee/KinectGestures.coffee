@@ -18,7 +18,7 @@ socket = require('socket.io-client')('http://localhost:8000');
 socket.on('bodyFrame', (bodyFrame)->
   _bodyFrame = bodyFrame
   bodyFrame.bodies.forEach((user,index)->
-    trackUser(user,index)
+    trackUser(index) if user.tracked
   )
 )
 
@@ -114,41 +114,41 @@ pauseGesture = (gesture)->
     isGesturePaused[gesture] = false
   , 1200)
 
-trackUser = (user, index)->
-  trackEvent(user, index, SWIPE_IN, isSwipeInEventStarted, isSwipeInEventHappening, SWIPE_OUT, true)
-  trackEvent(user, index, SWIPE_OUT, isSwipeOutEventStarted, isSwipeOutEventHappening, SWIPE_IN, true)
-  trackEvent(user, index, SWIPE_LEFT, isSwipeLeftEventStarted, isSwipeLeftEventHappening)
-  trackEvent(user, index, SWIPE_RIGHT, isSwipeRightEventStarted, isSwipeRightEventHappening)
+trackUser = (userIndex)->
+  trackUserEvent(userIndex, SWIPE_IN, isSwipeInEventStarted, isSwipeInEventHappening, SWIPE_OUT, true)
+  trackUserEvent(userIndex, SWIPE_OUT, isSwipeOutEventStarted, isSwipeOutEventHappening, SWIPE_IN, true)
+  trackUserEvent(userIndex, SWIPE_LEFT, isSwipeLeftEventStarted, isSwipeLeftEventHappening)
+  trackUserEvent(userIndex, SWIPE_RIGHT, isSwipeRightEventStarted, isSwipeRightEventHappening)
 
 
-trackEvent = (user, index, eventName, shouldTrackEvent, isEventHappening, pauseEventName=null, shouldPauseAllEvents=false)->
-  if user.tracked
-    oldLeftHandRelativeXPosition = Math.abs(getLeftHandXPositionRelativeToTorso(user))
-    oldRightHandRelativeXPosition = getRightHandXPositionRelativeToTorso(user)
-    headXPosition = getHeadXPositionRelativeToTorso(user)
+trackUserEvent = (userIndex, eventName, shouldTrackEvent, isEventHappening, pauseEventName=null, shouldPauseAllEvents=false)->
+  user = _bodyFrame.bodies[userIndex]
+  oldLeftHandRelativeXPosition = Math.abs(getLeftHandXPositionRelativeToTorso(user))
+  oldRightHandRelativeXPosition = getRightHandXPositionRelativeToTorso(user)
+  headXPosition = getHeadXPositionRelativeToTorso(user)
 
-    p = new HandPositions(oldLeftHandRelativeXPosition, oldRightHandRelativeXPosition, headXPosition)
+  p = new HandPositions(oldLeftHandRelativeXPosition, oldRightHandRelativeXPosition, headXPosition)
 
-    if shouldTrackEvent(p) and p.isHeadLooking
+  if shouldTrackEvent(p) and p.isHeadLooking
 
-      checkGestureTimeouts[index] = {} if !checkGestureTimeouts[index]?
-      clearTimeout(checkGestureTimeouts[index][eventName])
+    checkGestureTimeouts[userIndex] = checkGestureTimeouts[userIndex] || {}
+    clearTimeout(checkGestureTimeouts[userIndex][eventName])
 
-      checkGestureTimeouts[index][eventName] = setTimeout(()->
-        user = _bodyFrame.bodies[index]
-        newLeftHandRelativeXPosition = Math.abs(getLeftHandXPositionRelativeToTorso(user))
-        newRightHandRelativeXPosition = getRightHandXPositionRelativeToTorso(user)
-        headXPosition = getHeadXPositionRelativeToTorso(user)
+    checkGestureTimeouts[userIndex][eventName] = setTimeout(()->
+      user = _bodyFrame.bodies[userIndex]
+      newLeftHandRelativeXPosition = Math.abs(getLeftHandXPositionRelativeToTorso(user))
+      newRightHandRelativeXPosition = getRightHandXPositionRelativeToTorso(user)
+      headXPosition = getHeadXPositionRelativeToTorso(user)
 
-        m = new HandPositionsMovements(oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition, oldRightHandRelativeXPosition, newRightHandRelativeXPosition, headXPosition)
+      m = new HandPositionsMovements(oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition, oldRightHandRelativeXPosition, newRightHandRelativeXPosition, headXPosition)
 
-        if !isGesturePaused["ALL"]
-          if !isGesturePaused[eventName] and isEventHappening(m) and m.isHeadLooking
-            kinectGesturesEmitter.emit(eventName)
-            pauseGesture(pauseEventName) if pauseEventName
-            pauseGesture("ALL") if shouldPauseAllEvents
-            clearTimeout(checkGestureTimeouts[index][eventName])
+      if !isGesturePaused["ALL"]
+        if !isGesturePaused[eventName] and isEventHappening(m) and m.isHeadLooking
+          kinectGesturesEmitter.emit(eventName)
+          pauseGesture(pauseEventName) if pauseEventName
+          pauseGesture("ALL") if shouldPauseAllEvents
+          clearTimeout(checkGestureTimeouts[userIndex][eventName])
 
-      , 300)
+    , 300)
 
 module.exports = kinectGesturesEmitter
