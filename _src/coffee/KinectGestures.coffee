@@ -56,11 +56,11 @@ isRightHandClosed = (positionX)->
 
 isLeftHandStretching = (oldPositionX, positionX)->
   speed = positionX - oldPositionX
-  speed>=12
+  speed>=11
 
 isRightHandStretching = (oldPositionX, positionX)->
   speed = positionX - oldPositionX
-  speed>=12
+  speed>=11
 
 isLeftHandClosing = (oldPositionX, positionX)->
   speed = Math.abs(oldPositionX - positionX)
@@ -68,7 +68,7 @@ isLeftHandClosing = (oldPositionX, positionX)->
 
 isRightHandClosing = (oldPositionX, positionX)->
   speed = oldPositionX - positionX
-  speed>=20
+  speed>=14
 
 isSwipeInEventStarted = (p)->
   p.isRightHandStretched and p.isLeftHandStretched
@@ -83,16 +83,16 @@ isSwipeOutEventHappening = (m)->
   m.isRightHandStretching and m.isLeftHandStretching
 
 isSwipeLeftEventStarted = (p)->
-  p.isRightHandStretched and !p.isLeftHandStretched
+  p.isRightHandStretched unless p.isLeftHandStretched
 
 isSwipeLeftEventHappening = (m)->
-  m.isRightHandClosing and !m.isLeftHandClosing
+  m.isRightHandClosing unless m.isLeftHandClosing
 
 isSwipeRightEventStarted = (p)->
-  p.isLeftHandStretched and !p.isRightHandStretched
+  p.isLeftHandStretched unless p.isRightHandStretched
 
 isSwipeRightEventHappening = (m)->
-  m.isLeftHandClosing and !m.isRightHandClosing
+  m.isLeftHandClosing unless m.isRightHandClosing
 
 HandPositions = (oldLeftHandRelativeXPosition, oldRightHandRelativeXPosition, headPositionX)->
   this.isLeftHandStretched = isLeftHandStretched(oldLeftHandRelativeXPosition)
