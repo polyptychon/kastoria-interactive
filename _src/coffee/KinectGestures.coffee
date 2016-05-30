@@ -115,8 +115,8 @@ pauseGesture = (gesture)->
   , 1200)
 
 trackUser = (user, index)->
-  trackEvent(user, index, SWIPE_IN, isSwipeInEventStarted, isSwipeInEventHappening, SWIPE_OUT)
-  trackEvent(user, index, SWIPE_OUT, isSwipeOutEventStarted, isSwipeOutEventHappening, SWIPE_IN)
+  trackEvent(user, index, SWIPE_IN, isSwipeInEventStarted, isSwipeInEventHappening, SWIPE_OUT, true)
+  trackEvent(user, index, SWIPE_OUT, isSwipeOutEventStarted, isSwipeOutEventHappening, SWIPE_IN, true)
   trackEvent(user, index, SWIPE_LEFT, isSwipeLeftEventStarted, isSwipeLeftEventHappening)
   trackEvent(user, index, SWIPE_RIGHT, isSwipeRightEventStarted, isSwipeRightEventHappening)
 
