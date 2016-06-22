@@ -55,6 +55,13 @@ if (env!="production")
 if (env=="production")
   $('body').addClass('production')
 
+$('.info-gallery').bind('click', ()->
+  if $('body').hasClass('gallery-zoom')
+    unsetGalleryMode()
+  else
+    setGalleryMode()
+)
+
 handleKeyup = (event)->
   if (event.keyCode==Keyboard.PREVIOUS)
     selectPreviousMarker() if !$('body').hasClass('gallery-zoom')

@@ -35,6 +35,12 @@ $map-width: 100%;
   transition: all .5s ease-out;
   z-index: 100;
 }
+.production .info-gallery {
+  cursor: zoom-in;
+}
+.production.gallery-zoom .info-gallery {
+  cursor: zoom-out;
+}
 .info-data-container {
   position: relative;
   width: 100%;
