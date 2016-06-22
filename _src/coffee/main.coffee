@@ -52,10 +52,10 @@ if (env!="production")
     setGalleryMode()
   )
   kinectGestures.on("swipe_up", ()->
-    console.log("swipe up")
+#    console.log("swipe up")
   )
   kinectGestures.on("swipe_down", ()->
-    console.log("swipe down")
+    toggleLanguage()
   )
 
 if (env=="production")

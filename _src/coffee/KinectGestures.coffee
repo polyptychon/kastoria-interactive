@@ -27,8 +27,9 @@ getYPositionRelativeToTorso = (user, skeletonJoint=11)->
   relativePosition = 5
   if user.tracked
     position = Math.floor(user.joints[skeletonJoint].depthY * 100)
-    torsoPosition = Math.floor(user.joints[1].depthY * 100)
-    relativePosition = position - torsoPosition
+    relativePosition = position
+#    torsoPosition = Math.floor(user.joints[1].depthY * 100)
+#    relativePosition = position - torsoPosition
   return relativePosition
 
 getRightHandYPositionRelativeToTorso = (user)->
@@ -110,31 +111,31 @@ isSwipeRightEventHappening = (m)->
   m.isLeftHandClosing unless m.isRightHandClosing
 
 isLeftHandUp = (positionY)->
-  positionY>20
+  positionY<20
 
 isRightHandUp = (positionY)->
-  positionY>20
+  positionY<20
 
 isLeftHandDown = (positionY)->
-  positionY<5
+  positionY>50
 
 isRightHandDown = (positionY)->
-  positionY<5
+  positionY>50
 
 isLeftHandFalling = (oldPositionY, positionY)->
   speed = Math.abs(oldPositionY - positionY)
-  speed>=14
+  speed>=40
 
 isRightHandFalling = (oldPositionY, positionY)->
-  speed = oldPositionY - positionY
-  speed>=14
+  speed = Math.abs(oldPositionY - positionY)
+  speed>=40
 
 isLeftHandRising = (oldPositionY, positionY)->
   speed = Math.abs(oldPositionY - positionY)
   speed>=14
 
 isRightHandRising = (oldPositionY, positionY)->
-  speed = oldPositionY - positionY
+  speed = Math.abs(oldPositionY - positionY)
   speed>=14
 
 isSwipeUpEventStarted = (p)->
@@ -203,8 +204,8 @@ trackUser = (userIndex)->
     trackUserEvent(userIndex, SWIPE_OUT, isSwipeOutEventStarted, isSwipeOutEventHappening, SWIPE_IN, true)
   trackUserEvent(userIndex, SWIPE_LEFT, isSwipeLeftEventStarted, isSwipeLeftEventHappening)
   trackUserEvent(userIndex, SWIPE_RIGHT, isSwipeRightEventStarted, isSwipeRightEventHappening)
-  trackUserEvent(userIndex, SWIPE_UP, isSwipeUpEventStarted, isSwipeUpEventHappening)
-  trackUserEvent(userIndex, SWIPE_DOWN, isSwipeDownEventStarted, isSwipeDownEventHappening)
+  trackUserEvent(userIndex, SWIPE_UP, isSwipeUpEventStarted, isSwipeUpEventHappening, SWIPE_DOWN)
+  trackUserEvent(userIndex, SWIPE_DOWN, isSwipeDownEventStarted, isSwipeDownEventHappening, SWIPE_UP)
 
 
 trackUserEvent = (userIndex, eventName, shouldTrackEvent, isEventHappening, pauseEventName=null, shouldPauseAllEvents=false)->
@@ -213,6 +214,7 @@ trackUserEvent = (userIndex, eventName, shouldTrackEvent, isEventHappening, paus
   oldRightHandRelativeXPosition = getRightHandXPositionRelativeToTorso(user)
   oldLeftHandRelativeYPosition = Math.abs(getLeftHandYPositionRelativeToTorso(user))
   oldRightHandRelativeYPosition = getRightHandYPositionRelativeToTorso(user)
+
   headXPosition = getHeadXPositionRelativeToTorso(user)
 
   p = new HandPositions(
