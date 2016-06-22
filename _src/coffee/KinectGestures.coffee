@@ -117,18 +117,18 @@ isRightHandUp = (positionY)->
   positionY<20
 
 isLeftHandDown = (positionY)->
-  positionY>50
+  positionY>40
 
 isRightHandDown = (positionY)->
-  positionY>50
+  positionY>40
 
 isLeftHandFalling = (oldPositionY, positionY)->
   speed = Math.abs(oldPositionY - positionY)
-  speed>=40
+  speed>=30
 
 isRightHandFalling = (oldPositionY, positionY)->
   speed = Math.abs(oldPositionY - positionY)
-  speed>=40
+  speed>=30
 
 isLeftHandRising = (oldPositionY, positionY)->
   speed = Math.abs(oldPositionY - positionY)
