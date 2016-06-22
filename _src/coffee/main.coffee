@@ -78,8 +78,6 @@ handleKeyup = (event)->
 
 toggleLanguage = ()->
   $('body').toggleClass('en')
-#  GoogleMapsLoader.LANGUAGE = if $('body').hasClass('en') then 'en' else 'el'
-#  initMaps(google)
 
 zoomingTimeout = -1
 smoothZoom = ()->
