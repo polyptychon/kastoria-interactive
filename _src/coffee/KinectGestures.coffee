@@ -6,6 +6,8 @@ SWIPE_IN    = "swipe_in"
 SWIPE_OUT   = "swipe_out"
 SWIPE_LEFT  = "swipe_left"
 SWIPE_RIGHT = "swipe_right"
+SWIPE_UP    = "swipe_up"
+SWIPE_DOWN  = "swipe_down"
 
 kinectGesturesEmitter = new KinectGesturesEmitter();
 
@@ -21,6 +23,19 @@ socket.on('bodyFrame', (bodyFrame)->
     trackUser(index) if user.tracked
   )
 )
+getYPositionRelativeToTorso = (user, skeletonJoint=11)->
+  relativePosition = 5
+  if user.tracked
+    position = Math.floor(user.joints[skeletonJoint].depthY * 100)
+    torsoPosition = Math.floor(user.joints[1].depthY * 100)
+    relativePosition = position - torsoPosition
+  return relativePosition
+
+getRightHandYPositionRelativeToTorso = (user)->
+  return getYPositionRelativeToTorso(user)
+
+getLeftHandYPositionRelativeToTorso = (user)->
+  return getYPositionRelativeToTorso(user, 7)
 
 getXPositionRelativeToTorso = (user, skeletonJoint=11)->
   relativePosition = 5
@@ -94,14 +109,81 @@ isSwipeRightEventStarted = (p)->
 isSwipeRightEventHappening = (m)->
   m.isLeftHandClosing unless m.isRightHandClosing
 
-HandPositions = (oldLeftHandRelativeXPosition, oldRightHandRelativeXPosition, headPositionX)->
+isLeftHandUp = (positionY)->
+  positionY>20
+
+isRightHandUp = (positionY)->
+  positionY>20
+
+isLeftHandDown = (positionY)->
+  positionY<5
+
+isRightHandDown = (positionY)->
+  positionY<5
+
+isLeftHandFalling = (oldPositionY, positionY)->
+  speed = Math.abs(oldPositionY - positionY)
+  speed>=14
+
+isRightHandFalling = (oldPositionY, positionY)->
+  speed = oldPositionY - positionY
+  speed>=14
+
+isLeftHandRising = (oldPositionY, positionY)->
+  speed = Math.abs(oldPositionY - positionY)
+  speed>=14
+
+isRightHandRising = (oldPositionY, positionY)->
+  speed = oldPositionY - positionY
+  speed>=14
+
+isSwipeUpEventStarted = (p)->
+  p.isLeftHandDown or p.isRightHandDown
+
+isSwipeUpEventHappening = (m)->
+  m.isLeftHandRising or m.isRightHandRising
+
+isSwipeDownEventStarted = (p)->
+  p.isLeftHandUp or p.isRightHandUp
+
+isSwipeDownEventHappening = (m)->
+  m.isLeftHandFalling or m.isRightHandFalling
+
+HandPositions = (
+  oldLeftHandRelativeXPosition,
+  oldRightHandRelativeXPosition,
+  oldLeftHandRelativeYPosition,
+  oldRightHandRelativeYPosition,
+  headPositionX
+)->
+  this.isLeftHandUp = isLeftHandUp(oldLeftHandRelativeYPosition)
+  this.isRightHandUp = isRightHandUp(oldRightHandRelativeYPosition)
+  this.isLeftHandDown = isLeftHandDown(oldLeftHandRelativeYPosition)
+  this.isRightHandDown = isRightHandDown(oldRightHandRelativeYPosition)
+
   this.isLeftHandStretched = isLeftHandStretched(oldLeftHandRelativeXPosition)
   this.isRightHandStretched = isRightHandStretched(oldRightHandRelativeXPosition)
   this.isLeftHandClosed = isLeftHandClosed(oldLeftHandRelativeXPosition)
   this.isRightHandClosed = isRightHandClosed(oldRightHandRelativeXPosition)
   this.isHeadLooking = isHeadLooking(headPositionX)
 
-HandPositionsMovements = (oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition, oldRightHandRelativeXPosition, newRightHandRelativeXPosition, headPositionX)->
+HandPositionsMovements = (
+  oldLeftHandRelativeXPosition,
+  newLeftHandRelativeXPosition,
+  oldRightHandRelativeXPosition,
+  newRightHandRelativeXPosition,
+
+  oldLeftHandRelativeYPosition,
+  newLeftHandRelativeYPosition,
+  oldRightHandRelativeYPosition,
+  newRightHandRelativeYPosition,
+  headPositionX
+)->
+  this.isLeftHandFalling = isLeftHandFalling(oldLeftHandRelativeYPosition, newLeftHandRelativeYPosition)
+  this.isRightHandFalling = isRightHandFalling(oldRightHandRelativeYPosition, newRightHandRelativeYPosition)
+  this.isLeftHandRising = isLeftHandRising(oldLeftHandRelativeYPosition, newLeftHandRelativeYPosition)
+  this.isRightHandRising = isRightHandRising(oldRightHandRelativeYPosition, newRightHandRelativeYPosition)
+
   this.isLeftHandClosing = isLeftHandClosing(oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition)
   this.isRightHandClosing = isRightHandClosing(oldRightHandRelativeXPosition, newRightHandRelativeXPosition)
   this.isLeftHandStretching = isLeftHandStretching(oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition)
@@ -121,15 +203,25 @@ trackUser = (userIndex)->
     trackUserEvent(userIndex, SWIPE_OUT, isSwipeOutEventStarted, isSwipeOutEventHappening, SWIPE_IN, true)
   trackUserEvent(userIndex, SWIPE_LEFT, isSwipeLeftEventStarted, isSwipeLeftEventHappening)
   trackUserEvent(userIndex, SWIPE_RIGHT, isSwipeRightEventStarted, isSwipeRightEventHappening)
+  trackUserEvent(userIndex, SWIPE_UP, isSwipeUpEventStarted, isSwipeUpEventHappening)
+  trackUserEvent(userIndex, SWIPE_DOWN, isSwipeDownEventStarted, isSwipeDownEventHappening)
 
 
 trackUserEvent = (userIndex, eventName, shouldTrackEvent, isEventHappening, pauseEventName=null, shouldPauseAllEvents=false)->
   user = _bodyFrame.bodies[userIndex]
   oldLeftHandRelativeXPosition = Math.abs(getLeftHandXPositionRelativeToTorso(user))
   oldRightHandRelativeXPosition = getRightHandXPositionRelativeToTorso(user)
+  oldLeftHandRelativeYPosition = Math.abs(getLeftHandYPositionRelativeToTorso(user))
+  oldRightHandRelativeYPosition = getRightHandYPositionRelativeToTorso(user)
   headXPosition = getHeadXPositionRelativeToTorso(user)
 
-  p = new HandPositions(oldLeftHandRelativeXPosition, oldRightHandRelativeXPosition, headXPosition)
+  p = new HandPositions(
+    oldLeftHandRelativeXPosition,
+    oldRightHandRelativeXPosition,
+    oldLeftHandRelativeYPosition,
+    oldRightHandRelativeYPosition,
+    headXPosition
+  )
 
   if shouldTrackEvent(p) and p.isHeadLooking
 
@@ -140,9 +232,23 @@ trackUserEvent = (userIndex, eventName, shouldTrackEvent, isEventHappening, paus
       user = _bodyFrame.bodies[userIndex]
       newLeftHandRelativeXPosition = Math.abs(getLeftHandXPositionRelativeToTorso(user))
       newRightHandRelativeXPosition = getRightHandXPositionRelativeToTorso(user)
+      newLeftHandRelativeYPosition = Math.abs(getLeftHandYPositionRelativeToTorso(user))
+      newRightHandRelativeYPosition = getRightHandYPositionRelativeToTorso(user)
       headXPosition = getHeadXPositionRelativeToTorso(user)
 
-      m = new HandPositionsMovements(oldLeftHandRelativeXPosition, newLeftHandRelativeXPosition, oldRightHandRelativeXPosition, newRightHandRelativeXPosition, headXPosition)
+      m = new HandPositionsMovements(
+        oldLeftHandRelativeXPosition,
+        newLeftHandRelativeXPosition,
+        oldRightHandRelativeXPosition,
+        newRightHandRelativeXPosition,
+
+        oldLeftHandRelativeYPosition,
+        newLeftHandRelativeYPosition,
+        oldRightHandRelativeYPosition,
+        newRightHandRelativeYPosition,
+
+        headXPosition
+      )
 
       if !isGesturePaused["ALL"]
         if !isGesturePaused[eventName] and isEventHappening(m) and m.isHeadLooking
