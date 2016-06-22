@@ -111,24 +111,24 @@ isSwipeRightEventHappening = (m)->
   m.isLeftHandClosing unless m.isRightHandClosing
 
 isLeftHandUp = (positionY)->
-  positionY<30
+  positionY<40
 
 isRightHandUp = (positionY)->
-  positionY<30
+  positionY<40
 
 isLeftHandDown = (positionY)->
-  positionY>35
+  positionY>40
 
 isRightHandDown = (positionY)->
-  positionY>35
+  positionY>40
 
 isLeftHandFalling = (oldPositionY, positionY)->
   speed = Math.abs(oldPositionY - positionY)
-  speed>=30
+  speed>=15
 
 isRightHandFalling = (oldPositionY, positionY)->
   speed = Math.abs(oldPositionY - positionY)
-  speed>=20
+  speed>=15
 
 isLeftHandRising = (oldPositionY, positionY)->
   speed = Math.abs(oldPositionY - positionY)
