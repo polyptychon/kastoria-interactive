@@ -1,0 +1,12 @@
+.share-menu {
+  a {
+    color: $gray !important;
+    &:hover, &:focus {
+      text-decoration: none;
+      color: $brand-primary !important;
+    }
+  }
+  .share-icon {
+    margin-bottom: -8px;
+  }
+}

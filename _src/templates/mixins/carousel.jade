@@ -1,0 +1,58 @@
+mixin carouselLabel(labels, activeIndex, classes)
+  - if (!Array.isArray(labels)) labels = [labels]
+
+  div.carousel.slide.label(
+  class=classes,
+  data-ride="carousel",
+  data-autoplay="false"
+  )
+    div.carousel-inner
+      each label, index in labels
+        div.item(class=index==activeIndex ? "active" : "")
+          if (label.caption)
+            .carousel-caption= label.caption
+    if (labels.length>1)
+      a.left.carousel-control(href="#", data-slide="prev")
+        span.glyphicon.glyphicon-chevron-left
+      a.right.carousel-control(href="#", data-slide="next")
+        span.glyphicon.glyphicon-chevron-right
+
+mixin carousel(images, options, classes)
+  - options = options || {}
+  - autoplay = options.autoplay || "false";
+  - loadNextPrevious = options.loadNextPrevious || "true"
+  - imgStretch = options.imgStretch || "true"
+  - backgroundScale = options.backgroundScale || ""
+  - useCarouselControls = options.useCarouselControls || true
+  - useIndicators = options.useIndicators || true
+  - scaleBackgroundProportionally = options.scaleBackgroundProportionally || "true"
+  - previousIcon = options.previousIcon || "glyphicon-chevron-left"
+  - nextIcon = options.nextIcon || "glyphicon-chevron-right"
+  - bindToCarousel = options.bindToCarousel || null
+  - carouselId = options.id || null
+  - if (!Array.isArray(images)) images = [images]
+
+  div.carousel.slide(
+  id=carouselId,
+  class=classes
+  )
+    if (images.length>1 && useIndicators===true)
+      ol.carousel-indicators
+        each val, index in images
+          li(class=index==0 ? "active" : "", data-slide-to=index data-target="#"+carouselId)
+
+    div.carousel-inner
+      each img, index in images
+        div.item(class=index==0 ? "active" : "")
+          .item-overlay
+          .item-image(style="background-image:url('#{img.src}')")
+          if (img.caption)
+            .carousel-caption!= img.caption
+            br
+            a.btn.btn-primary.text-uppercase(href="news-details.html") ΔΙΑΒΑΣΤΕ ΠΕΡΙΣΣΟΤΕΡΑ
+
+    if (images.length>1 && useCarouselControls===true)
+      a.left.carousel-control(href="#"+carouselId, data-slide="prev")
+        span.glyphicon(class=previousIcon)
+      a.right.carousel-control(href="#"+carouselId, data-slide="next")
+        span.glyphicon(class=nextIcon)

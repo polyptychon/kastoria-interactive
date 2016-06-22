@@ -1,0 +1,8 @@
+.breadcrumb {
+  background: none;
+  padding: 0;
+  .current, .current-cat, .current > a, .current-cat > a {
+
+    color: $text-color;
+  }
+}
