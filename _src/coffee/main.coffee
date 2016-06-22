@@ -82,7 +82,7 @@ unsetGalleryMode = ()->
   $('.info-item.active').find('.carousel').carousel({interval:5000})
 
 getData = () ->
-  data.filter((point) -> point.properties['category-slug']==FILTER && FILTER!='')
+  data.filter((point) -> point.properties['category-slug']==window.FILTER || window.FILTER=='')
 
 GoogleMapsLoader.load((g)->
   google = g

@@ -13,7 +13,8 @@ html
         "METABYZANTINA":"metabyzantina",
         "SYGXRONA":"sygxrona"
       }
-      var FILTER = "#{locals.filter}";
+      var env = "#{locals.env}";
+      var FILTER = env==="production" ? "" : "#{locals.filter}";
   body
     .map(id="map")
     .info
