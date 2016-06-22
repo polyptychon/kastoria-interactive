@@ -7,7 +7,6 @@ require "bootstrap/assets/javascripts/bootstrap/dropdown"
 require "bootstrap/assets/javascripts/bootstrap/collapse"
 require "bootstrap/assets/javascripts/bootstrap/carousel"
 
-kinectGestures = require('./KinectGestures.coffee')
 data = require('./data')
 
 GoogleMapsLoader = require('google-maps')
@@ -35,21 +34,27 @@ map = null
 google = null
 selectedMarker = null
 
+if (env!="production")
+  kinectGestures = require('./KinectGestures.coffee')
 
-kinectGestures.on("swipe_left", ()->
-  selectNextMarker() if !$('body').hasClass('gallery-zoom')
-  $('.info-item.active').find('.carousel').carousel('next') if $('body').hasClass('gallery-zoom')
-)
-kinectGestures.on("swipe_right", ()->
-  selectPreviousMarker() if !$('body').hasClass('gallery-zoom')
-  $('.info-item.active').find('.carousel').carousel('prev') if $('body').hasClass('gallery-zoom')
-)
-kinectGestures.on("swipe_in", ()->
-  unsetGalleryMode()
-)
-kinectGestures.on("swipe_out", ()->
-  setGalleryMode()
-)
+  kinectGestures.on("swipe_left", ()->
+    selectNextMarker() if !$('body').hasClass('gallery-zoom')
+    $('.info-item.active').find('.carousel').carousel('next') if $('body').hasClass('gallery-zoom')
+  )
+  kinectGestures.on("swipe_right", ()->
+    selectPreviousMarker() if !$('body').hasClass('gallery-zoom')
+    $('.info-item.active').find('.carousel').carousel('prev') if $('body').hasClass('gallery-zoom')
+  )
+  kinectGestures.on("swipe_in", ()->
+    unsetGalleryMode()
+  )
+  kinectGestures.on("swipe_out", ()->
+    setGalleryMode()
+  )
+
+if (env=="production")
+  $('body').addClass('production')
+
 handleKeyup = (event)->
   if (event.keyCode==Keyboard.PREVIOUS)
     selectPreviousMarker() if !$('body').hasClass('gallery-zoom')

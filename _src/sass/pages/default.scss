@@ -58,6 +58,9 @@ $map-width: 100%;
   overflow-x: hidden;
   padding: 15px 40px;
 }
+.production .info-data, .production .info-data-en {
+  overflow-y: auto;
+}
 .info-data-title {
   h1 {
     color: white;
