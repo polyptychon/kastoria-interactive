@@ -51,6 +51,12 @@ if (env!="production")
   kinectGestures.on("swipe_out", ()->
     setGalleryMode()
   )
+  kinectGestures.on("swipe_up", ()->
+    console.log("swipe up")
+  )
+  kinectGestures.on("swipe_down", ()->
+    console.log("swipe down")
+  )
 
 if (env=="production")
   $('body').addClass('production')
