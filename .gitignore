@@ -3,6 +3,8 @@
 builds
 logs
 node_modules
+_mockups
+_src
 .env
 .idea
 filter.js
