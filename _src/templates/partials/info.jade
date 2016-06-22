@@ -8,8 +8,14 @@ each markerData,index in locals.data
   .info-item
     .info-gallery
       +carousel(getImageArrayFromData(markerData),{id: "homeCarousel"})
-    .info-data
-      .info-data-title
-        h1=markerData.properties.name
-      .info-data-description
-        p!=markerData.properties.description
+    .info-data-container
+      .info-data
+        .info-data-title
+          h1=markerData.properties.name
+        .info-data-description
+          p!=markerData.properties.description
+      .info-data-en
+        .info-data-title
+          h1=markerData.propertiesEn.name
+        .info-data-description
+          p!=markerData.propertiesEn.description
