@@ -55,8 +55,13 @@ $map-width: 100%;
 .info-data-en {
   left: 100%;
 }
-.en .info-data {
-  left: 100%;
+.en {
+  .info-data {
+    left: 100%;
+  }
+  .info-data-en {
+    left: 0;
+  }
 }
 .info-data, .info-data-en {
   height: 100%;

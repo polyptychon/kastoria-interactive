@@ -73,6 +73,13 @@ handleKeyup = (event)->
     setGalleryMode()
   else if (event.keyCode==Keyboard.DOWN)
     unsetGalleryMode()
+  else if (event.keyCode==Keyboard.SPACE)
+    toggleLanguage()
+
+toggleLanguage = ()->
+  $('body').toggleClass('en')
+#  GoogleMapsLoader.LANGUAGE = if $('body').hasClass('en') then 'en' else 'el'
+#  initMaps(google)
 
 zoomingTimeout = -1
 smoothZoom = ()->
@@ -96,13 +103,17 @@ unsetGalleryMode = ()->
 getData = () ->
   data.filter((point) -> point.properties['category-slug']==window.FILTER || window.FILTER=='')
 
+
 GoogleMapsLoader.load((g)->
+  initMaps(g)
+)
+
+initMaps = (g)->
   google = g
   map = new google.maps.Map($('.map')[0], mapOptions)
   setMarkers()
   google.maps.event.addListenerOnce(map,"bounds_changed", ()-> selectMarker(getData()[0].marker))
-  $(global).bind('keyup', handleKeyup)
-)
+  $(global).unbind('keyup').bind('keyup', handleKeyup)
 
 setMarkers = ()->
   getData()
