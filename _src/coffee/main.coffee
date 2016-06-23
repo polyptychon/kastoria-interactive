@@ -9,7 +9,6 @@ require "bootstrap/assets/javascripts/bootstrap/carousel"
 
 data = require('./data')
 
-GoogleMapsLoader = require('google-maps')
 Keyboard = {
   ENTER: 13,
   SPACE: 32,
@@ -19,6 +18,7 @@ Keyboard = {
   DOWN: 40
 };
 
+GoogleMapsLoader = require('google-maps')
 GoogleMapsLoader.KEY = 'AIzaSyD8y7IJNTgRSwbnoR-I1OopiRU721SZg3k'
 GoogleMapsLoader.VERSION = '3.14'
 GoogleMapsLoader.LANGUAGE = 'el'
@@ -111,6 +111,7 @@ getData = () ->
 GoogleMapsLoader.load((g)->
   initMaps(g)
 )
+
 
 initMaps = (g)->
   google = g

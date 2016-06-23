@@ -52,15 +52,43 @@ $map-width: 100%;
   top: 0;
   left: 0;
 }
+.info-data {
+  animation-duration: 1s;
+  animation-name: slidein;
+}
 .info-data-en {
-  left: 100%;
+  top: 100%;
+  animation-duration: 1s;
+  animation-name: slideout;
 }
 .en {
   .info-data {
-    left: 100%;
+    top: 100%;
+    animation-duration: 1s;
+    animation-name: slideout;
   }
   .info-data-en {
-    left: 0;
+    top: 0;
+    animation-duration: 1s;
+    animation-name: slidein;
+  }
+}
+@keyframes slidein {
+  from {
+    top: -100%;
+  }
+
+  to {
+    top: 0;
+  }
+}
+@keyframes slideout {
+  from {
+    top: 0;
+  }
+
+  to {
+    top: 100%;
   }
 }
 .info-data, .info-data-en {
