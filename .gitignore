@@ -7,3 +7,4 @@ node_modules
 .idea
 filter.js
 npm-debug.log
+dist
