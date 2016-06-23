@@ -1,1 +1,0 @@
-"C:\Program Files\Git\bin\sh.exe" --login -i -c " cd c:/Users/user/Documents/GitHub/kastoria-interactive/ && git pull && gulp build" "%~1"

@@ -9,3 +9,4 @@ _src
 .idea
 filter.js
 npm-debug.log
+dist
