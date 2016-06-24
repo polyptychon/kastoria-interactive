@@ -54,7 +54,9 @@ getLeftHandXPositionRelativeToTorso = (user)->
 
 getHeadXPositionRelativeToTorso = (user)->
   try
-    return Math.abs(Math.floor(user.joints[4].orientationZ * 100))
+    if user.tracked && user.joints[4]
+      return Math.abs(Math.floor(user.joints[4].orientationZ * 100))
+     else 14
   catch
     return 14
 

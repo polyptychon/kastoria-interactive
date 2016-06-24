@@ -40,6 +40,7 @@ if (env!="production")
   kinectGestures.on("swipe_left", ()->
     selectNextMarker() if !$('body').hasClass('gallery-zoom')
     $('.info-item.active').find('.carousel').carousel('next') if $('body').hasClass('gallery-zoom')
+    hideHelp()
   )
   kinectGestures.on("swipe_right", ()->
     selectPreviousMarker() if !$('body').hasClass('gallery-zoom')
@@ -68,7 +69,9 @@ if (env=="production")
       setGalleryMode()
   )
 
-$('.help video')[0].pause()
+try
+  $('.help video')[0].pause()
+catch
 
 handleKeyup = (event)->
   if (event.keyCode==Keyboard.PREVIOUS)
@@ -82,13 +85,24 @@ handleKeyup = (event)->
   else if (event.keyCode==Keyboard.DOWN)
     unsetGalleryMode()
   else if (event.keyCode==Keyboard.ENTER)
-    $('body').toggleClass('show-help')
     if $('body').hasClass('show-help')
-      $('.help video')[0].play()
+      hideHelp()
     else
-      $('.help video')[0].pause()
+      showHelp()
   else if (event.keyCode==Keyboard.SPACE)
     toggleLanguage()
+
+hideHelp = ()->
+  try
+    $('body').removeClass('show-help')
+    $('.help video')[0].pause()
+  catch
+
+showHelp = ()->
+  try
+    $('body').addClass('show-help')
+    $('.help video')[0].play()
+  catch
 
 toggleLanguage = ()->
   $('body').toggleClass('en')
