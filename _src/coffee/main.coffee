@@ -36,29 +36,37 @@ selectedMarker = null
 
 if (env!="production")
   kinectGestures = require('./KinectGestures.coffee')
+  afterGesture = ()->
+    hideHelp()
 
   kinectGestures.on("swipe_left", ()->
-    selectNextMarker() if !$('body').hasClass('gallery-zoom')
-    $('.info-item.active').find('.carousel').carousel('next') if $('body').hasClass('gallery-zoom')
-    hideHelp()
+    if !$('body').hasClass('show-help')
+      selectNextMarker() if !$('body').hasClass('gallery-zoom')
+      $('.info-item.active').find('.carousel').carousel('next') if $('body').hasClass('gallery-zoom')
+    afterGesture()
   )
   kinectGestures.on("swipe_right", ()->
-    selectPreviousMarker() if !$('body').hasClass('gallery-zoom')
-    $('.info-item.active').find('.carousel').carousel('prev') if $('body').hasClass('gallery-zoom')
+    if !$('body').hasClass('show-help')
+      selectPreviousMarker() if !$('body').hasClass('gallery-zoom')
+      $('.info-item.active').find('.carousel').carousel('prev') if $('body').hasClass('gallery-zoom')
+    afterGesture()
   )
   kinectGestures.on("swipe_in", ()->
-    unsetGalleryMode()
+    unsetGalleryMode() if !$('body').hasClass('show-help')
+    afterGesture()
   )
   kinectGestures.on("swipe_out", ()->
-    setGalleryMode()
-  )
-  kinectGestures.on("swipe_up", ()->
-#    console.log("swipe up")
+    setGalleryMode() if !$('body').hasClass('show-help')
+    afterGesture()
   )
   kinectGestures.on("swipe_down", ()->
-    toggleLanguage()
+    toggleLanguage() if !$('body').hasClass('show-help')
+    afterGesture()
   )
 
+  kinectGestures.on("swipe_left", ()->
+
+  )
 if (env=="production")
   $('body').addClass('production')
 
