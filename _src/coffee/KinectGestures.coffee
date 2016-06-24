@@ -16,20 +16,20 @@ checkGestureTimeouts = {}
 isGestureDisabledTimeout = -1
 isGesturePaused = {}
 
-socket = require('socket.io-client')('http://localhost:8000');
+socket = require('socket.io-client')('http://192.168.0.28:8000');
 socket.on('bodyFrame', (bodyFrame)->
   _bodyFrame = bodyFrame
   bodyFrame.bodies.forEach((user,index)->
     trackUser(index) if user.tracked
   )
 )
+# cameraX, cameraY, cameraZ, colorX, colorY, depthX, depthY, orientationW, orientationX, orientationY, orientationZ
 getYPositionRelativeToTorso = (user, skeletonJoint=11)->
   relativePosition = 5
   if user.tracked
     position = Math.floor(user.joints[skeletonJoint].depthY * 100)
-    relativePosition = position
-#    torsoPosition = Math.floor(user.joints[1].depthY * 100)
-#    relativePosition = position - torsoPosition
+    torsoPosition = Math.floor(user.joints[1].depthY * 100)
+    relativePosition = position - torsoPosition
   return relativePosition
 
 getRightHandYPositionRelativeToTorso = (user)->
@@ -53,10 +53,15 @@ getLeftHandXPositionRelativeToTorso = (user)->
   return getXPositionRelativeToTorso(user, 7)
 
 getHeadXPositionRelativeToTorso = (user)->
-  return getXPositionRelativeToTorso(user, 3)
+  try
+    return Math.abs(Math.floor(user.joints[4].orientationZ * 100))
+  catch
+    return 14
 
-isHeadLooking = (positionX)->
-  (positionX>=-2 and positionX<=2)
+
+
+isHeadLooking = (orientationZ)->
+  orientationZ<25
 
 isLeftHandStretched = (positionX)->
   positionX>20
@@ -111,24 +116,24 @@ isSwipeRightEventHappening = (m)->
   m.isLeftHandClosing unless m.isRightHandClosing
 
 isLeftHandUp = (positionY)->
-  positionY<40
+  positionY<-10
 
 isRightHandUp = (positionY)->
-  positionY<40
+  positionY<-10
 
 isLeftHandDown = (positionY)->
-  positionY>40
+  positionY>20
 
 isRightHandDown = (positionY)->
-  positionY>40
+  positionY>20
 
 isLeftHandFalling = (oldPositionY, positionY)->
   speed = Math.abs(oldPositionY - positionY)
-  speed>=15
+  speed>=30
 
 isRightHandFalling = (oldPositionY, positionY)->
   speed = Math.abs(oldPositionY - positionY)
-  speed>=15
+  speed>=30
 
 isLeftHandRising = (oldPositionY, positionY)->
   speed = Math.abs(oldPositionY - positionY)
@@ -139,7 +144,7 @@ isRightHandRising = (oldPositionY, positionY)->
   speed>=14
 
 isSwipeUpEventStarted = (p)->
-  p.isLeftHandDown or p.isRightHandDown
+  p.isLeftHandDown and p.isRightHandDown
 
 isSwipeUpEventHappening = (m)->
   m.isLeftHandRising or m.isRightHandRising
@@ -195,24 +200,24 @@ pauseGesture = (gesture)->
   isGesturePaused[gesture] = true
   isGestureDisabledTimeout = setTimeout(()->
     isGesturePaused[gesture] = false
-  , 1200)
+  , 1000)
 
 trackUser = (userIndex)->
   if $('body').hasClass('gallery-zoom')
     trackUserEvent(userIndex, SWIPE_IN, isSwipeInEventStarted, isSwipeInEventHappening, SWIPE_OUT, true)
   if !$('body').hasClass('gallery-zoom')
     trackUserEvent(userIndex, SWIPE_OUT, isSwipeOutEventStarted, isSwipeOutEventHappening, SWIPE_IN, true)
-  trackUserEvent(userIndex, SWIPE_LEFT, isSwipeLeftEventStarted, isSwipeLeftEventHappening)
-  trackUserEvent(userIndex, SWIPE_RIGHT, isSwipeRightEventStarted, isSwipeRightEventHappening)
-  trackUserEvent(userIndex, SWIPE_UP, isSwipeUpEventStarted, isSwipeUpEventHappening, SWIPE_DOWN)
-  trackUserEvent(userIndex, SWIPE_DOWN, isSwipeDownEventStarted, isSwipeDownEventHappening, SWIPE_UP)
+  trackUserEvent(userIndex, SWIPE_LEFT, isSwipeLeftEventStarted, isSwipeLeftEventHappening, SWIPE_DOWN)
+  trackUserEvent(userIndex, SWIPE_RIGHT, isSwipeRightEventStarted, isSwipeRightEventHappening, SWIPE_DOWN)
+  trackUserEvent(userIndex, SWIPE_UP, isSwipeUpEventStarted, isSwipeUpEventHappening)
+  trackUserEvent(userIndex, SWIPE_DOWN, isSwipeDownEventStarted, isSwipeDownEventHappening)
 
 
 trackUserEvent = (userIndex, eventName, shouldTrackEvent, isEventHappening, pauseEventName=null, shouldPauseAllEvents=false)->
   user = _bodyFrame.bodies[userIndex]
   oldLeftHandRelativeXPosition = Math.abs(getLeftHandXPositionRelativeToTorso(user))
   oldRightHandRelativeXPosition = getRightHandXPositionRelativeToTorso(user)
-  oldLeftHandRelativeYPosition = Math.abs(getLeftHandYPositionRelativeToTorso(user))
+  oldLeftHandRelativeYPosition = getLeftHandYPositionRelativeToTorso(user)
   oldRightHandRelativeYPosition = getRightHandYPositionRelativeToTorso(user)
 
   headXPosition = getHeadXPositionRelativeToTorso(user)
@@ -234,7 +239,7 @@ trackUserEvent = (userIndex, eventName, shouldTrackEvent, isEventHappening, paus
       user = _bodyFrame.bodies[userIndex]
       newLeftHandRelativeXPosition = Math.abs(getLeftHandXPositionRelativeToTorso(user))
       newRightHandRelativeXPosition = getRightHandXPositionRelativeToTorso(user)
-      newLeftHandRelativeYPosition = Math.abs(getLeftHandYPositionRelativeToTorso(user))
+      newLeftHandRelativeYPosition = getLeftHandYPositionRelativeToTorso(user)
       newRightHandRelativeYPosition = getRightHandYPositionRelativeToTorso(user)
       headXPosition = getHeadXPositionRelativeToTorso(user)
 
