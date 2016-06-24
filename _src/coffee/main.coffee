@@ -68,6 +68,8 @@ if (env=="production")
       setGalleryMode()
   )
 
+$('.help video')[0].pause()
+
 handleKeyup = (event)->
   if (event.keyCode==Keyboard.PREVIOUS)
     selectPreviousMarker() if !$('body').hasClass('gallery-zoom')
@@ -79,6 +81,12 @@ handleKeyup = (event)->
     setGalleryMode()
   else if (event.keyCode==Keyboard.DOWN)
     unsetGalleryMode()
+  else if (event.keyCode==Keyboard.ENTER)
+    $('body').toggleClass('show-help')
+    if $('body').hasClass('show-help')
+      $('.help video')[0].play()
+    else
+      $('.help video')[0].pause()
   else if (event.keyCode==Keyboard.SPACE)
     toggleLanguage()
 
