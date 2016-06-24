@@ -251,6 +251,15 @@ gulp.task('photos', function() {
     .pipe(gulpif(env === PRODUCTION && USE_FINGERPRINTING, rev.manifest()))
     .pipe(gulpif(env === PRODUCTION && USE_FINGERPRINTING, gulp.dest(BUILD+'/rev/photos')))
 });
+gulp.task('video', function() {
+  return gulp.src([MOCKUPS+'/video/**'])
+    .pipe(duration('video'))
+    .pipe(gulpif(env === PRODUCTION && USE_FINGERPRINTING, rev()))
+    .pipe(gulp.dest(getOutputDir()+ASSETS+'/video').on('error', gutil.log))
+    .pipe(gulpif(env === PRODUCTION && USE_FINGERPRINTING, rev.manifest()))
+    .pipe(gulpif(env === PRODUCTION && USE_FINGERPRINTING, gulp.dest(BUILD+'/rev/video')))
+});
+
 gulp.task('clean-images', function() {
   return new Promise(function (resolve, reject) {
     var vp = vinylPaths();
@@ -340,12 +349,12 @@ gulp.task('live', ['json', 'coffee', 'jade', 'sass', 'watch']);
 gulp.task('editor', ['editorSass']);
 
 gulp.task('build', function() {
-  runSequence(['clean-images'],['fonts','images','photos','sounds','spriteSass','autoVariables'],['json', 'fonts','coffee','sass'],['jade']);
+  runSequence(['clean-images'],['fonts','images','photos','video','sounds','spriteSass','autoVariables'],['json', 'fonts','coffee','sass'],['jade']);
 });
 gulp.task('server', ['connect', 'watch']);
 gulp.task('production', function() {
   env = PRODUCTION;
-  runSequence(['clean-json','clean-images','clean-sounds','clean-css', 'clean-js'],['images','photos','sounds','json','fonts'],['coffee','sass'],['jade']);
+  runSequence(['clean-json','clean-images','clean-sounds','clean-css', 'clean-js'],['images','photos','video','sounds','json','fonts'],['coffee','sass'],['jade']);
 });
 
 //gulp watch --jade=filename

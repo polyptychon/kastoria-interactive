@@ -17,6 +17,8 @@ html
       var FILTER = env==="production" ? "" : "#{locals.filter}";
   body
     .map(id="map")
+    .help
+      video(loop autoplay src="help.mp4")
     .info
       include partials/info
 include partials/footer
