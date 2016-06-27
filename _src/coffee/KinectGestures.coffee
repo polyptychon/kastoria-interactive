@@ -16,7 +16,7 @@ checkGestureTimeouts = {}
 isGestureDisabledTimeout = -1
 isGesturePaused = {}
 
-socket = require('socket.io-client')('http://192.168.0.28:8000');
+socket = require('socket.io-client')('http://localhost:8000');
 socket.on('bodyFrame', (bodyFrame)->
   _bodyFrame = bodyFrame
   bodyFrame.bodies.forEach((user,index)->
