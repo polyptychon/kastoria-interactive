@@ -15,7 +15,16 @@ html
       }
       var env = "#{locals.env}";
       var FILTER = env==="production" ? "" : "#{locals.filter}";
-  body
+    if locals.env==="production"
+      style.
+        .info-data-title h1 {
+          font-size: 22px;
+        }
+        .info-data-description p {
+          font-size: 16px;
+        }
+
+body
     .map(id="map")
     .help
       video(loop autoplay="false" src="assets/video/help.mp4")
