@@ -17,7 +17,7 @@ Keyboard = {
   NEXT: 39,
   DOWN: 40
 };
-
+helpInterval = 0
 GoogleMapsLoader = require('google-maps')
 GoogleMapsLoader.KEY = 'AIzaSyD8y7IJNTgRSwbnoR-I1OopiRU721SZg3k'
 GoogleMapsLoader.VERSION = '3.14'
@@ -38,35 +38,38 @@ if (env!="production")
   kinectGestures = require('./KinectGestures.coffee')
   afterGesture = ()->
     hideHelp()
+  beforeGesture = ()->
+    clearInterval(helpInterval)
+    helpInterval = setInterval(showHelp, (1000*60*10))
 
   kinectGestures.on("swipe_left", ()->
+    beforeGesture()
     if !$('body').hasClass('show-help')
       selectNextMarker() if !$('body').hasClass('gallery-zoom')
       $('.info-item.active').find('.carousel').carousel('next') if $('body').hasClass('gallery-zoom')
     afterGesture()
   )
   kinectGestures.on("swipe_right", ()->
+    beforeGesture()
     if !$('body').hasClass('show-help')
       selectPreviousMarker() if !$('body').hasClass('gallery-zoom')
       $('.info-item.active').find('.carousel').carousel('prev') if $('body').hasClass('gallery-zoom')
-    afterGesture()
   )
   kinectGestures.on("swipe_in", ()->
+    beforeGesture()
     unsetGalleryMode() if !$('body').hasClass('show-help')
     afterGesture()
   )
   kinectGestures.on("swipe_out", ()->
+    beforeGesture()
     setGalleryMode() if !$('body').hasClass('show-help')
     afterGesture()
   )
   kinectGestures.on("swipe_down", ()->
+    beforeGesture()
     toggleLanguage() if !$('body').hasClass('show-help')
-    afterGesture()
   )
 
-  kinectGestures.on("swipe_left", ()->
-
-  )
 if (env=="production")
   $('body').addClass('production')
 
@@ -76,10 +79,6 @@ if (env=="production")
     else
       setGalleryMode()
   )
-
-try
-  $('.help video')[0].pause()
-catch
 
 handleKeyup = (event)->
   if (event.keyCode==Keyboard.PREVIOUS)
@@ -111,6 +110,11 @@ showHelp = ()->
     $('body').addClass('show-help')
     $('.help video')[0].play()
   catch
+
+try
+#  $('.help video')[0].pause()
+  showHelp()
+catch
 
 toggleLanguage = ()->
   $('body').toggleClass('en')
