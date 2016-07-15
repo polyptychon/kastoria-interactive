@@ -54,6 +54,7 @@ if (env!="production")
     if !$('body').hasClass('show-help')
       selectPreviousMarker() if !$('body').hasClass('gallery-zoom')
       $('.info-item.active').find('.carousel').carousel('prev') if $('body').hasClass('gallery-zoom')
+    afterGesture()
   )
   kinectGestures.on("swipe_in", ()->
     beforeGesture()
