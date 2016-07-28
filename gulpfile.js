@@ -266,7 +266,7 @@ gulp.task('clean-images', function() {
 
     gulp.src(getOutputDir()+ASSETS+'/images')
       .pipe(vp)
-      .pipe(gulp.dest('dist'))
+      .pipe(gulp.dest('builds'))
       .on('end', function () {
         del(vp.paths).then(resolve).catch(reject);
       });
@@ -306,7 +306,7 @@ gulp.task('clean-sounds', function() {
 
     gulp.src(getOutputDir()+ASSETS+'/sounds')
       .pipe(vp)
-      .pipe(gulp.dest('dist'))
+      .pipe(gulp.dest('builds'))
       .on('end', function () {
         del(vp.paths).then(resolve).catch(reject);
       });
@@ -349,12 +349,12 @@ gulp.task('live', ['json', 'coffee', 'jade', 'sass', 'watch']);
 gulp.task('editor', ['editorSass']);
 
 gulp.task('build', function() {
-  runSequence(['clean-images'],['fonts','images','photos','video','sounds','spriteSass','autoVariables'],['json', 'fonts','coffee','sass'],['jade']);
+  runSequence(['fonts','images','photos','video','sounds','spriteSass','autoVariables'],['json', 'fonts','coffee','sass'],['jade']);
 });
 gulp.task('server', ['connect', 'watch']);
 gulp.task('production', function() {
   env = PRODUCTION;
-  runSequence(['clean-json','clean-images','clean-sounds','clean-css', 'clean-js'],['images','photos','video','sounds','json','fonts'],['coffee','sass'],['jade']);
+  runSequence(['images','photos','video','sounds','json','fonts'],['coffee','sass'],['jade']);
 });
 
 //gulp watch --jade=filename

@@ -29,7 +29,7 @@ html
 
 body
     .map(id="map")
-    if(locals.env==="production")
+    if(locals.env!=="production")
       .help
         video(loop autoplay="false" src="assets/video/help.mp4")
     .info
