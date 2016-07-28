@@ -29,8 +29,9 @@ html
 
 body
     .map(id="map")
-    .help
-      video(loop autoplay="false" src="assets/video/help.mp4")
+    if(locals.env==="production")
+      .help
+        video(loop autoplay="false" src="assets/video/help.mp4")
     .info
       include partials/info
 include partials/footer
