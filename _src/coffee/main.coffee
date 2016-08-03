@@ -19,7 +19,6 @@ Keyboard = {
 };
 helpInterval = 0
 changeImageTimeout = 0
-markerAnimationTimeout = 0
 GoogleMapsLoader = require('google-maps')
 GoogleMapsLoader.KEY = 'AIzaSyD8y7IJNTgRSwbnoR-I1OopiRU721SZg3k'
 GoogleMapsLoader.VERSION = '3.14'
@@ -217,8 +216,7 @@ selectMarker = (value) ->
     panToCenter(position)
     resetMarker(selectedMarker)
     marker.setAnimation(google.maps.Animation.BOUNCE)
-    clearTimeout(markerAnimationTimeout)
-    markerAnimationTimeout = setTimeout(()->
+    setTimeout(()->
       marker.setAnimation(null)
     , 1000)
     marker.setZIndex(1000)
