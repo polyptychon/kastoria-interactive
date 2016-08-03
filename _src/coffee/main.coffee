@@ -18,6 +18,8 @@ Keyboard = {
   DOWN: 40
 };
 helpInterval = 0
+changeImageTimeout = 0
+markerAnimationTimeout = 0
 GoogleMapsLoader = require('google-maps')
 GoogleMapsLoader.KEY = 'AIzaSyD8y7IJNTgRSwbnoR-I1OopiRU721SZg3k'
 GoogleMapsLoader.VERSION = '3.14'
@@ -215,7 +217,8 @@ selectMarker = (value) ->
     panToCenter(position)
     resetMarker(selectedMarker)
     marker.setAnimation(google.maps.Animation.BOUNCE)
-    setTimeout(()->
+    clearTimeout(markerAnimationTimeout)
+    markerAnimationTimeout = setTimeout(()->
       marker.setAnimation(null)
     , 1000)
     marker.setZIndex(1000)
@@ -228,7 +231,8 @@ selectMarker = (value) ->
     oldActiveItem.removeClass('active')
     newActiveItem = $('.info-item').eq(index)
     newActiveItem.css('display', 'block')
-    setTimeout(()->
+    clearTimeout(changeImageTimeout)
+    changeImageTimeout = setTimeout(()->
       oldActiveItem.css('display', 'none')
       newActiveItem.addClass('active')
       newActiveItem.find('.carousel').carousel({interval:5000})
