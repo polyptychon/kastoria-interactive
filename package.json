@@ -78,7 +78,7 @@
     "install": "napa",
     "start": "electron main.js",
     "server": "node broadcast.js",
-    "deploy": "npm run build && gh-pages -d builds/production"
+    "deploy": "gh-pages -d builds/production"
   },
   "napa": {
     "bootstrap": "twbs/bootstrap-sass",
