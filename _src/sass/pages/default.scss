@@ -1,4 +1,19 @@
 $map-width: 100%;
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 35px;
+  height: 35px;
+  padding: 0 5px 0 11px;
+  font-size: 12px;
+  border-radius: 50%;
+  background: white;
+  color: #999;
+  display: none;
+  z-index: 1000000;
+    box-shadow: 0 0 8px #999;
+}
 .help {
   position: absolute;
   left: 20px;
@@ -159,5 +174,31 @@ $map-width: 100%;
     &.active {
       display: block;
     }
+  }
+}
+@media (max-width: $screen-xs) {
+  .help {
+    display: none;
+  }
+  .info {
+    left: 100%;
+    width: 100%;
+    &.active {
+      left: 0;
+    }
+  }
+  .close-button {
+    display: block;
+  }
+  .info-data-container {
+    h1 {
+      font-size: 24px;
+    }
+    p {
+      font-size: 16px;
+    }
+  }
+  .info-data, .info-data-en {
+    padding: 10px 25px;
   }
 }

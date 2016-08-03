@@ -34,7 +34,7 @@ mapOptions = {
 map = null
 google = null
 selectedMarker = null
-
+env="production"
 if (env!="production")
   kinectGestures = require('./KinectGestures.coffee')
   afterGesture = ()->
@@ -212,6 +212,7 @@ selectMarker = (value) ->
       value
   markerData = getMarkerByPosition(position)
   if markerData?
+    $('.info').addClass('active')
     marker = markerData.marker
     panToCenter(position)
     resetMarker(selectedMarker)
@@ -287,3 +288,7 @@ panToCenter = (latlng) ->
 
   newCenter = map.getProjection().fromPointToLatLng(worldCoordinateNewCenter)
   map.panTo(newCenter)
+
+$('.close-button').bind('click', ()->
+  $('.info').removeClass('active')
+)
