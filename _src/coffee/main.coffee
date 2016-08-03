@@ -33,7 +33,7 @@ mapOptions = {
 map = null
 google = null
 selectedMarker = null
-env = "production"
+
 if (env!="production")
   kinectGestures = require('./KinectGestures.coffee')
   afterGesture = ()->
