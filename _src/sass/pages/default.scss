@@ -49,8 +49,10 @@ $map-width: 100%;
   width: 100%;
   height: 100%;
   background: $brand-primary;
+  display: none;
   &.active {
     left: 0;
+    display: block;
   }
 }
 

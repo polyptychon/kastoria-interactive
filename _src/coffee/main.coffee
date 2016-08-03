@@ -33,7 +33,7 @@ mapOptions = {
 map = null
 google = null
 selectedMarker = null
-
+env = "production"
 if (env!="production")
   kinectGestures = require('./KinectGestures.coffee')
   afterGesture = ()->
@@ -222,11 +222,17 @@ selectMarker = (value) ->
     selectedMarker = marker
     marker.setIcon(getIcon('assets/images/church-yellow.png'))
     index = data.indexOf(markerData)
-    $('.info-item.active').find('.carousel').carousel({interval:1000000000})
-    $('.info-item.active').find('.carousel').carousel('pause')
-    $('.info-item.active').removeClass('active')
-    $('.info-item').eq(index).addClass('active')
-    $('.info-item').eq(index).find('.carousel').carousel({interval:5000})
+    oldActiveItem = $('.info-item.active')
+    oldActiveItem.find('.carousel').carousel({interval:1000000000})
+    oldActiveItem.find('.carousel').carousel('pause')
+    oldActiveItem.removeClass('active')
+    newActiveItem = $('.info-item').eq(index)
+    newActiveItem.css('display', 'block')
+    setTimeout(()->
+      oldActiveItem.css('display', 'none')
+      newActiveItem.addClass('active')
+      newActiveItem.find('.carousel').carousel({interval:5000})
+    ,500)
 #    setData(markerData)
 
 handleMarkerClick = (event)->
