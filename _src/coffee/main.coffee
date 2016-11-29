@@ -7,6 +7,10 @@ require "bootstrap/assets/javascripts/bootstrap/dropdown"
 require "bootstrap/assets/javascripts/bootstrap/collapse"
 require "bootstrap/assets/javascripts/bootstrap/carousel"
 
+if (env=="production")
+  queryString = require "./queryString"
+  $('body').addClass(queryString('lang')) if queryString('lang')
+
 data = require('./data')
 
 Keyboard = {
@@ -42,35 +46,35 @@ if (env!="production")
   beforeGesture = ()->
     clearInterval(helpInterval)
     helpInterval = setInterval(showHelp, (1000*60*10))
-
-  kinectGestures.on("swipe_left", ()->
-    beforeGesture()
-    if !$('body').hasClass('show-help')
-      selectNextMarker() if !$('body').hasClass('gallery-zoom')
-      $('.info-item.active').find('.carousel').carousel('next') if $('body').hasClass('gallery-zoom')
-    afterGesture()
-  )
-  kinectGestures.on("swipe_right", ()->
-    beforeGesture()
-    if !$('body').hasClass('show-help')
-      selectPreviousMarker() if !$('body').hasClass('gallery-zoom')
-      $('.info-item.active').find('.carousel').carousel('prev') if $('body').hasClass('gallery-zoom')
-    afterGesture()
-  )
-  kinectGestures.on("swipe_in", ()->
-    beforeGesture()
-    unsetGalleryMode() if !$('body').hasClass('show-help')
-    afterGesture()
-  )
-  kinectGestures.on("swipe_out", ()->
-    beforeGesture()
-    setGalleryMode() if !$('body').hasClass('show-help')
-    afterGesture()
-  )
-  kinectGestures.on("swipe_down", ()->
-    beforeGesture()
-    toggleLanguage() if !$('body').hasClass('show-help')
-  )
+  if kinectGestures
+    kinectGestures.on("swipe_left", ()->
+      beforeGesture()
+      if !$('body').hasClass('show-help')
+        selectNextMarker() if !$('body').hasClass('gallery-zoom')
+        $('.info-item.active').find('.carousel').carousel('next') if $('body').hasClass('gallery-zoom')
+      afterGesture()
+    )
+    kinectGestures.on("swipe_right", ()->
+      beforeGesture()
+      if !$('body').hasClass('show-help')
+        selectPreviousMarker() if !$('body').hasClass('gallery-zoom')
+        $('.info-item.active').find('.carousel').carousel('prev') if $('body').hasClass('gallery-zoom')
+      afterGesture()
+    )
+    kinectGestures.on("swipe_in", ()->
+      beforeGesture()
+      unsetGalleryMode() if !$('body').hasClass('show-help')
+      afterGesture()
+    )
+    kinectGestures.on("swipe_out", ()->
+      beforeGesture()
+      setGalleryMode() if !$('body').hasClass('show-help')
+      afterGesture()
+    )
+    kinectGestures.on("swipe_down", ()->
+      beforeGesture()
+      toggleLanguage() if !$('body').hasClass('show-help')
+    )
 
 if (env=="production")
   $('body').addClass('production')
@@ -188,8 +192,10 @@ addMarker = (point)->
   marker = new google.maps.Marker({
     map: map
     draggable: true
+    iconImage: point.properties['icon']
+    iconImageSelected: point.properties['icon-selected']
     animation: google.maps.Animation.DROP
-    icon: getIcon()
+    icon: getIcon(point.properties.icon)
     position: {lat: point.geometry.coordinates[1], lng: point.geometry.coordinates[0]}
   })
   point.marker = marker
@@ -199,7 +205,7 @@ addMarker = (point)->
 resetMarker = (marker)->
   return if !marker
   marker.setZIndex(100)
-  marker.setIcon(getIcon())
+  marker.setIcon(getIcon(marker.iconImage))
   marker.setAnimation(null) if (selectedMarker!=marker)
 
 selectMarker = (value) ->
@@ -222,7 +228,7 @@ selectMarker = (value) ->
     , 1000)
     marker.setZIndex(1000)
     selectedMarker = marker
-    marker.setIcon(getIcon('assets/images/church-yellow.png'))
+    marker.setIcon(getIcon(marker.iconImageSelected))
     index = data.indexOf(markerData)
     oldActiveItem = $('.info-item.active')
     oldActiveItem.find('.carousel').carousel({interval:1000000000})
