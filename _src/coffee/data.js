@@ -150,7 +150,7 @@ module.exports = [
       ]
     },
     "properties": {
-      "name": "Αγ. Νικόλαος του Κασνίτση",
+      "name": "Αγ. Νικόλαος του Κασνίτζη",
       "slug": "agios-nikolaos-kaznitsi",
       "category": "Βυζαντινά",
       "category-slug": "byzantina",
