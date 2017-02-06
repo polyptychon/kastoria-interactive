@@ -284,7 +284,7 @@ module.exports = [
     "geometry": {
       "type": "Point",
       "coordinates": [
-        21.2876483,
+        21.2896483,
         40.5091271,
         0
       ]
